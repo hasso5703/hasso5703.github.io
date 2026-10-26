@@ -55,10 +55,24 @@ const faq = [
   },
 ];
 
+// One graph: the site (Google reads its name for the results), the project, which is both an application and its
+// source code, and its author.
 const jsonld = [
   {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
+    '@type': 'WebSite',
+    '@id': SITE.url + '/#website',
+    name: SITE.name,
+    url: SITE.url + '/',
+    inLanguage: 'en',
+    description: SITE.sentence,
+    about: { '@id': SITE.url + '/#software' },
+    publisher: { '@id': SITE.url + '/#author' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': ['SoftwareApplication', 'SoftwareSourceCode'],
+    '@id': SITE.url + '/#software',
     name: SITE.name,
     description: SITE.sentence,
     url: SITE.url + '/',
@@ -69,8 +83,10 @@ const jsonld = [
     dateModified: SITE.versionDate,
     license: 'https://opensource.org/licenses/MIT',
     codeRepository: SITE.repo,
+    sameAs: [SITE.repo],
+    discussionUrl: SITE.discussions,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    author: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    author: { '@type': 'Person', '@id': SITE.url + '/#author', name: SITE.author.name, url: SITE.author.url, sameAs: [SITE.author.url] },
     installUrl: SITE.repo + '#quickstart',
     downloadUrl: SITE.releases,
   },
@@ -148,7 +164,7 @@ const clients = ['Claude Code', 'opencode', 'Hermes Agent', 'Open WebUI', 'Curso
         <h3>The GB10 unified-memory trap</h3>
         <p>
           On a Spark the hard part comes after the first model. SGLang's memory accounting misses 25 to 40 GB of
-          transient allocations in the shared pool, and a pool pushed to zero freezes the box until a power cycle.
+          transient allocations in the shared pool, and a pool pushed to zero freezes the box until a power cycle.{' '}
           <a href={gh('docs/gb10-memory.md')}>Read how the trap works</a>.
         </p>
       </div>

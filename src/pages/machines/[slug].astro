@@ -55,7 +55,7 @@ const jsonld = [
       {m.tested ? <p>{m.tested}</p> : (
         <p>
           The project is measured on an ASUS Ascent GX10, the same chip and the same system. The installer reads the
-          memory of the box, not its brand. If you run it on {runOn}, tell us how it went in
+          memory of the box, not its brand. If you run it on {runOn}, tell us how it went in{' '}
           <a href={SITE.discussions}>the discussions</a>.
         </p>
       )}
@@ -81,7 +81,7 @@ const jsonld = [
           <p>
             A 64 GB box serves NVIDIA's Nemotron 3.5 Bolt at 110.8 tok/s (greedy median) and keeps Qwen3.8-27B one Load
             away at 67.2 tok/s, both measured at a 64 GB budget on the reference box. Lanes that need 128 GB are refused
-            before anything is downloaded.
+            before anything is downloaded.{' '}
             <a href="/dgx-spark-64gb/">What runs on 64 GB, in detail</a>.
           </p>
         </>

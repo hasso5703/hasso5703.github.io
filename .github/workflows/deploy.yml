@@ -25,6 +25,12 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      # The pages that changed since the published site, written by scripts/postbuild.py, for the IndexNow job.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: changed-pages
+          path: postbuild-out/
+          retention-days: 7
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -34,3 +40,21 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+  # Bing, Yandex, Seznam and Naver learn within minutes which pages changed (https://www.indexnow.org). Only the pages
+  # that changed are sent. A refusal is a warning in the run's summary, never a failed deploy.
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: changed-pages
+      - name: Tell IndexNow which pages changed
+        run: |
+          n=$(python3 -c "import json; print(len(json.load(open('indexnow.json'))['urlList']))")
+          if [ "$n" = 0 ]; then echo "No page changed: nothing sent to IndexNow." | tee -a "$GITHUB_STEP_SUMMARY"; exit 0; fi
+          keyurl=$(python3 -c "import json; print(json.load(open('indexnow.json'))['keyLocation'])")
+          for i in $(seq 1 24); do [ "$(curl -s -o /dev/null -w '%{http_code}' "$keyurl")" = 200 ] && break; sleep 5; done
+          code=$(curl -sS -o resp.txt -w '%{http_code}' -H 'Content-Type: application/json; charset=utf-8' --data @indexnow.json https://api.indexnow.org/indexnow)
+          echo "IndexNow answered HTTP $code for $n page(s)." | tee -a "$GITHUB_STEP_SUMMARY"
+          case "$code" in 200|202) ;; *) echo "::warning::IndexNow answered HTTP $code: $(head -c 300 resp.txt)" ;; esac
