@@ -2,8 +2,8 @@ import { SITE } from '../data/site';
 import { lanes } from '../data/lanes';
 import { machines } from '../data/machines';
 
-type Fm = { slug: string; h1: string; description: string };
-const guides = Object.values(import.meta.glob<{ frontmatter: Fm }>('./guides/*.md', { eager: true })).map((m) => m.frontmatter);
+type Fm = { slug: string; h1: string; description: string; rank?: number };
+const guides = Object.values(import.meta.glob<{ frontmatter: Fm }>('./guides/*.md', { eager: true })).map((m) => m.frontmatter).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99) || a.h1.localeCompare(b.h1));
 
 // llms.txt (llmstxt.org): what an answer engine should know about the project, in its own words, with the pages
 // that prove each claim. Built from the same data as the pages, so the two can never disagree.

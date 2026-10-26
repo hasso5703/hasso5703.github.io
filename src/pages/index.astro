@@ -7,8 +7,8 @@ import { SITE, gh } from '../data/site';
 import { lanes } from '../data/lanes';
 import { machines } from '../data/machines';
 
-type Fm = { slug: string; h1: string; description: string };
-const guides = Object.values(import.meta.glob<{ frontmatter: Fm }>('./guides/*.md', { eager: true })).map((m) => m.frontmatter);
+type Fm = { slug: string; h1: string; description: string; rank?: number };
+const guides = Object.values(import.meta.glob<{ frontmatter: Fm }>('./guides/*.md', { eager: true })).map((m) => m.frontmatter).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99) || a.h1.localeCompare(b.h1));
 
 const title = 'dgx-spark-qwen38: one command, a private AI server on DGX Spark';
 const description =

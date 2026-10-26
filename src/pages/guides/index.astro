@@ -2,9 +2,9 @@
 import Base from '../../layouts/Base.astro';
 import { SITE } from '../../data/site';
 
-type Fm = { slug: string; h1: string; description: string };
+type Fm = { slug: string; h1: string; description: string; rank?: number };
 const mods = import.meta.glob<{ frontmatter: Fm }>('./*.md', { eager: true });
-const guides = Object.values(mods).map((m) => m.frontmatter).sort((a, b) => a.h1.localeCompare(b.h1));
+const guides = Object.values(mods).map((m) => m.frontmatter).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99) || a.h1.localeCompare(b.h1));
 const path = '/guides/';
 const title = 'DGX Spark guides: local models, Claude Code, freezes, engines';
 const description =
