@@ -1,0 +1,138 @@
+---
+import Base from '../../layouts/Base.astro';
+import Command from '../../components/Command.astro';
+import Faq from '../../components/Faq.astro';
+import { SITE, gh } from '../../data/site';
+
+const path = '/dgx-spark-64gb/';
+const title = 'What to run on a 64 GB DGX Spark: measured models';
+const description =
+  'On a 64 GB DGX Spark, Nemotron 3.5 Bolt answers at 110.8 tok/s and Qwen3.8-27B at 67.2 tok/s, measured at a ' +
+  '64 GB budget. What fits, what needs 128 GB.';
+const published = '2026-10-26';
+const nvidiaBlog = 'https://blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync/';
+const nvidiaPage = 'https://www.nvidia.com/en-us/products/workstations/dgx-spark/';
+
+const faq = [
+  {
+    q: 'Can a 64 GB DGX Spark run Qwen3.8-27B?',
+    a: 'Yes, in NVFP4 without the 1M window: two requests at a time, 59,625 tokens of KV cache, so one prompt of up to 54,855 tokens, at 67.2 tok/s (greedy median). Load it from the cockpit.',
+  },
+  {
+    q: 'What is the best model for a 64 GB DGX Spark?',
+    a: "For most work, NVIDIA's Nemotron 3.5 Bolt: it reads images and video, answers at 110.8 tok/s (greedy median) and keeps 667,874 tokens of KV cache, 2.55 times its 262,144-token window.",
+  },
+  {
+    q: 'Can a 64 GB DGX Spark make images or video?',
+    a: 'Not with this installer. The image and video lanes need a 128 GB DGX Spark, and the installer refuses them on a 64 GB box before downloading anything.',
+  },
+  {
+    q: 'Is 64 GB enough for Claude Code or opencode?',
+    a: "Yes. Bolt's pool holds the largest agent step measured on the project (43,863 tokens) many times over. On the 27B, a step that large can be refused as too long, and Claude Code and opencode compact and carry on.",
+  },
+];
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'What to run on a 64 GB DGX Spark',
+    description,
+    datePublished: published,
+    dateModified: SITE.updated,
+    author: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    about: ['NVIDIA DGX Spark 64 GB', 'NVIDIA GB10', 'Nemotron 3.5 Bolt', 'Qwen3.8-27B'],
+    mainEntityOfPage: SITE.url + path,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: '64 GB DGX Spark', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/">{SITE.name}</a> / 64 GB DGX Spark</p>
+      <h1>What to run on a 64 GB DGX Spark</h1>
+      <p class="lead">Measured on the project's reference box at the memory a 64 GB box gives each engine, on 2026-10-24.</p>
+    </header>
+
+    <div class="prose">
+      <p class="answer">
+        Serve NVIDIA's <strong>Nemotron 3.5 Bolt</strong>: it reads images and video and answers at <strong>110.8 tok/s</strong>
+        (greedy median), with 667,874 tokens of KV cache, 2.55 times its 262,144-token window. Keep
+        <strong>Qwen3.8-27B</strong> one Load away for text and code: <strong>67.2 tok/s</strong>, two requests at a time.
+        One command installs exactly that, and refuses what needs 128 GB before a byte is downloaded.
+      </p>
+
+      <h2>What fits, measured</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Lane</th><th scope="col">On a 64 GB DGX Spark</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><span class="dot" style="background:#84cc16"></span>Nemotron 3.5 Bolt</th><td>The lane it serves, with a memory share of its own: 667,874 tokens of KV (2.55 times its 262,144-token window), <strong class="num">110.8 tok/s</strong> greedy median on <code>./bench.sh</code>.</td></tr>
+            <tr><th scope="row"><span class="dot" style="background:#8c6cff"></span>Qwen3.8-27B in NVFP4</th><td>A Load away, in a unit sized for 64 GB: two requests at a time, 59,625 tokens of KV (one prompt of up to 54,855 tokens), <strong class="num">67.2 tok/s</strong> greedy median.</td></tr>
+            <tr><th scope="row">Speech</th><td>As on any box, on the CPU: Qwen3-ASR hears, Kokoro speaks.</td></tr>
+            <tr><th scope="row">Needs 128 GB</th><td>The flash lane, the 1M window of the 27B, the FP8 targets, images, video, Kolibri-1, Nemotron 3.5 Super VL, Flash FP4-Local and Ornith 1.5 122B are refused, as they need a 128 GB DGX Spark.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <dl class="receipt">
+        <dt>Measured on</dt><dd>{SITE.referenceBox}, at the memory a 64 GB box gives each engine, on 2026-10-24</dd>
+        <dt>How</dt><dd>every setting tried is in the changelog of v1.40.0</dd>
+        <dt>Source</dt><dd><a href={gh('README.md#on-a-64-gb-dgx-spark')}>README, On a 64 GB DGX Spark</a> and <a href={gh('CHANGELOG.md')}>CHANGELOG</a></dd>
+      </dl>
+
+      <h2>How the installer knows the box has 64 GB</h2>
+      <p>
+        It reads the box's class from its memory: a 128 GB box from 110 GiB, a 64 GB DGX Spark from 48 GiB, and below that
+        it stops at its first step and says how many GiB the box has. Each refusal comes before a byte is fetched: in the
+        installer, in each lane's installer, in the model switch, and so in the cockpit's Load, where a lane a 64 GB box
+        cannot hold says it needs a 128 GB DGX Spark. The cockpit names the box from its firmware, for example
+        "ASUS Ascent GX10, 64 GB".
+      </p>
+
+      <h2>Coding agents on 64 GB</h2>
+      <p>
+        Bolt is the better fit for long agent sessions on 64 GB: its pool holds, many times over, the largest of 2,156
+        opencode steps measured on the project, 43,863 tokens. The 27B's pool holds an agent's turns but can
+        refuse a step that large as too long, and Claude Code and opencode then compact and carry on. The installer fits
+        opencode's limits to the pool the 27B boots to.
+      </p>
+
+      <h2>Which machines come with 64 GB</h2>
+      <p>
+        NVIDIA's 64 GB configuration has the same GB10 chip and the same 273 GB/s of memory bandwidth as the 128 GB one,
+        and NVIDIA rates it for models of up to 100B parameters (<a href={nvidiaPage}>NVIDIA's DGX Spark page</a>). It is sold
+        only by NVIDIA's partners: from October 23, 2026, by Acer, ASUS, Dell, GIGABYTE, HP and MSI
+        (<a href={nvidiaBlog}>NVIDIA's announcement</a>). See <a href="/machines/">every GB10 machine</a>.
+      </p>
+
+      <h2>Two 64 GB boxes</h2>
+      <p>
+        NVIDIA rates two linked 64 GB units for models of up to 200B parameters. This project serves one box today. A
+        two-box mode is being designed with an owner of a linked pair, in <a href={SITE.discussions + '/45'}>discussion #45</a>.
+      </p>
+
+      <h2>Install it</h2>
+      <p>On a 64 GB box, the first install ends on Bolt. The same command updates it later.</p>
+    </div>
+    <Command />
+
+    <section class="section" aria-labelledby="faq-h" style="padding-top:72px">
+      <div class="section-head"><h2 id="faq-h">Questions about the 64 GB DGX Spark</h2></div>
+      <Faq items={faq} />
+      <p class="updated" style="margin-top:28px">Published {published}. Last checked {SITE.updated} against {SITE.name} {SITE.version}.</p>
+    </section>
+  </div>
+</Base>

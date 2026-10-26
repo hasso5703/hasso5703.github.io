@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../data/site';
+
+type Fm = { slug: string; h1: string; description: string };
+const mods = import.meta.glob<{ frontmatter: Fm }>('./*.md', { eager: true });
+const guides = Object.values(mods).map((m) => m.frontmatter).sort((a, b) => a.h1.localeCompare(b.h1));
+const path = '/guides/';
+const title = 'DGX Spark guides: local models, Claude Code, freezes, engines';
+const description =
+  'Answers for DGX Spark owners: Claude Code or opencode on a local model, why a Spark freezes when a model loads, ' +
+  'which engine to run.';
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'DGX Spark guides',
+    itemListElement: guides.map((g, i) => ({ '@type': 'ListItem', position: i + 1, name: g.h1, url: `${SITE.url}/guides/${g.slug}/` })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/">{SITE.name}</a> / Guides</p>
+      <h1>Guides for DGX Spark owners</h1>
+      <p class="lead">Each one answers a question owners ask, with the source of every number.</p>
+    </header>
+    <ul class="guide-list">
+      {guides.map((g) => (
+        <li><a href={`/guides/${g.slug}/`}><span class="g-title">{g.h1}</span><span class="muted">{g.description}</span></a></li>
+      ))}
+      <li><a href="/dgx-spark-64gb/"><span class="g-title">What to run on a 64 GB DGX Spark</span><span class="muted">Nemotron 3.5 Bolt at 110.8 tok/s and Qwen3.8-27B at 67.2 tok/s at a 64 GB budget, and what needs 128 GB.</span></a></li>
+    </ul>
+    <div style="height:96px"></div>
+  </div>
+</Base>

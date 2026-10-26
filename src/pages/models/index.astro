@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../data/site';
+import { lanes } from '../../data/lanes';
+
+const path = '/models/';
+const title = 'Best models for a DGX Spark, measured: Qwen3.8, Nemotron, Kolibri';
+const description =
+  'Nine models measured on a DGX Spark: Qwen3.8-27B at 71.4 tok/s with a 1M context, a 176B on one box, Nemotron 3.5 ' +
+  'Bolt at 140 tok/s, image, video.';
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Models measured on a DGX Spark',
+    itemListElement: lanes.map((l, i) => ({ '@type': 'ListItem', position: i + 1, name: l.name, url: `${SITE.url}/models/${l.slug}/` })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: 'Models', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/">{SITE.name}</a> / Models</p>
+      <h1>Nine models, measured on a DGX Spark</h1>
+      <p class="lead">Each one is a lane: pinned, proved before it serves, and loaded with one button. Numbers from {SITE.referenceBox}, with their method.</p>
+    </header>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th scope="col">Model</th><th scope="col">Measured</th><th scope="col">What it is</th><th scope="col">64 GB box</th></tr></thead>
+        <tbody>
+          {lanes.map((l) => (
+            <tr>
+              <th scope="row"><span class="dot" style={`background:${l.hue}`}></span><a href={`/models/${l.slug}/`}>{l.name}</a><div class="muted" style="font-weight:400;font-size:14px">{l.maker}</div></th>
+              <td class="n">{l.value} {l.unit}<div class="muted" style="font-weight:400;font-size:14px;white-space:normal">{l.what}</div></td>
+              <td>{l.kind}</td>
+              <td>{l.fits64.startsWith('Yes') ? 'Yes' : 'No'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div style="height:96px"></div>
+  </div>
+</Base>

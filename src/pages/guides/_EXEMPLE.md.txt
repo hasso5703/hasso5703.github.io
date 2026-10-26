@@ -1,0 +1,22 @@
+---
+layout: ../../layouts/Guide.astro
+slug: example-slug
+title: "SEO title, 50 to 65 characters, the query people type"
+description: "150 to 160 characters: the answer in one sentence, with the key number."
+h1: "The question, as owners ask it"
+published: "2026-10-26"
+answer: "Two or three sentences that answer the question first, with the measured numbers. <strong>Bold</strong> allowed."
+faq:
+  - q: "A question owners ask"
+    a: "The answer in plain text, one to three sentences, numbers from the repo only."
+sources:
+  - label: "docs/gb10-memory.md"
+    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/gb10-memory.md"
+related:
+  - label: "What to run on a 64 GB DGX Spark"
+    href: "/dgx-spark-64gb/"
+---
+
+## A section heading
+
+Body in Markdown.

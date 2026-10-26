@@ -1,0 +1,104 @@
+---
+import { lanes } from '../data/lanes';
+import { SITE } from '../data/site';
+const first = lanes[0];
+---
+<div class="pool-ui" data-pool>
+  <div class="rack" role="tablist" aria-label="Lanes" aria-orientation="vertical">
+    {lanes.map((l, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${l.id}`}
+          aria-controls="lane-panel"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-lane={l.id}
+          style={`--hue:${l.hue}`}
+        >
+          <img src={l.logo} alt="" width="26" height="26" />
+          <span class="n">{l.name}</span>
+          <span class="k">{l.kind}</span>
+        </button>
+    ))}
+  </div>
+
+  <div class="lane-view" id="lane-panel" role="tabpanel" aria-labelledby={`tab-${first.id}`} style={`--hue:${first.hue}`} aria-live="polite">
+    <div class="pool">
+      <div class="poolbar" aria-hidden="true"><span class="fill filling"></span><span class="label" data-f="barname">{first.name}</span></div>
+      <p class="pool-caption">
+        The 128 GB of unified memory, shared by the CPU and the GPU, held by <b data-f="name">{first.name}</b> while it
+        serves. The other lanes wait on disk until you load one.
+      </p>
+    </div>
+    <p class="metric"><span class:list={['v', first.value.length > 7 && 'long']} data-f="value">{first.value}</span><span class="u" data-f="unit">{first.unit}</span></p>
+    <p class="metric-what" data-f="what">{first.what}</p>
+    <ul class="lane-facts" data-f="facts">{first.facts.map((f) => <li>{f}</li>)}</ul>
+    <p class="lane-build" data-f="build">{first.build[0].toUpperCase() + first.build.slice(1)}.</p>
+    <dl class="receipt">
+      <dt>Measured on</dt><dd>{SITE.referenceBox}, the project's reference box</dd>
+      <dt>How</dt><dd data-f="method">{first.receipt.method}</dd>
+      <dt>Source</dt><dd><a data-f="source" href={first.receipt.href}>{first.receipt.source}</a></dd>
+    </dl>
+  </div>
+</div>
+
+<script type="application/json" id="lanes-data" set:html={JSON.stringify(lanes)} />
+
+<script>
+  type Lane = {
+    id: string; name: string; hue: string; value: string; unit: string; what: string; facts: string[]; build: string;
+    receipt: { method: string; source: string; href: string };
+  };
+  const root = document.querySelector<HTMLElement>('[data-pool]');
+  const data: Lane[] = JSON.parse(document.getElementById('lanes-data')?.textContent || '[]');
+  if (root && data.length) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panel = root.querySelector<HTMLElement>('#lane-panel')!;
+    const fill = panel.querySelector<HTMLElement>('.fill')!;
+    const f = (k: string) => panel.querySelector<HTMLElement>(`[data-f="${k}"]`)!;
+
+    const show = (id: string, focus = false) => {
+      const lane = data.find((l) => l.id === id);
+      if (!lane) return;
+      tabs.forEach((t) => {
+        const on = t.dataset.lane === id;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      });
+      panel.style.setProperty('--hue', lane.hue);
+      panel.setAttribute('aria-labelledby', `tab-${lane.id}`);
+      f('name').textContent = lane.name;
+      f('barname').textContent = lane.name;
+      const v = f('value');
+      v.textContent = lane.value;
+      v.classList.toggle('long', lane.value.length > 7);
+      f('unit').textContent = lane.unit;
+      f('what').textContent = lane.what;
+      f('facts').replaceChildren(...lane.facts.map((x) => Object.assign(document.createElement('li'), { textContent: x })));
+      f('build').textContent = lane.build[0].toUpperCase() + lane.build.slice(1) + '.';
+      f('method').textContent = lane.receipt.method;
+      const src = f('source') as HTMLAnchorElement;
+      src.textContent = lane.receipt.source;
+      src.href = lane.receipt.href;
+      fill.classList.remove('filling');
+      void fill.offsetWidth;
+      fill.classList.add('filling');
+    };
+
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => show(t.dataset.lane!));
+      t.addEventListener('keydown', (e) => {
+        const step = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
+        if (e.key === 'Home' || e.key === 'End') {
+          e.preventDefault();
+          show(tabs[e.key === 'Home' ? 0 : tabs.length - 1].dataset.lane!, true);
+        } else if (step) {
+          e.preventDefault();
+          show(tabs[(i + step + tabs.length) % tabs.length].dataset.lane!, true);
+        }
+      });
+    });
+  }
+</script>

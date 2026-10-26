@@ -1,0 +1,303 @@
+---
+import Base from '../layouts/Base.astro';
+import Command from '../components/Command.astro';
+import LanePool from '../components/LanePool.astro';
+import Faq from '../components/Faq.astro';
+import { SITE, gh } from '../data/site';
+import { lanes } from '../data/lanes';
+import { machines } from '../data/machines';
+
+type Fm = { slug: string; h1: string; description: string };
+const guides = Object.values(import.meta.glob<{ frontmatter: Fm }>('./guides/*.md', { eager: true })).map((m) => m.frontmatter);
+
+const title = 'dgx-spark-qwen38: one command, a private AI server on DGX Spark';
+const description =
+  'Open-source installer for the DGX Spark and every GB10 machine: Qwen3.8-27B at 71.4 tok/s, a 1M context, ' +
+  'eight more measured models, OpenAI and Anthropic APIs.';
+
+const faq = [
+  {
+    q: 'Does anything leave the box?',
+    a: 'No prompt, image or video leaves the box. The installer downloads the pinned engine images and model weights, ' +
+      'and the cockpit asks GitHub whether a newer release exists. Every request you send is answered on the machine itself.',
+  },
+  {
+    q: 'Which machines does it run on?',
+    a: 'It is built for the NVIDIA DGX Spark and every other GB10 machine on stock DGX OS: ASUS Ascent GX10, Dell Pro Precision ' +
+      'with GB10 (launched as Dell Pro Max), HP ZGX Nano G1n, Lenovo ThinkStation PGX, MSI EdgeXpert, GIGABYTE AI TOP ATOM and Acer Veriton GN100. ' +
+      'It reads how much memory the box has, not its brand, and it is measured on an ASUS Ascent GX10.',
+  },
+  {
+    q: 'Does it work on a 64 GB DGX Spark?',
+    a: "Yes. On a 64 GB box it installs what fits: NVIDIA's Nemotron 3.5 Bolt serves at 110.8 tok/s (greedy median) and " +
+      'Qwen3.8-27B is one Load away at 67.2 tok/s, both measured at a 64 GB budget on the reference box. A lane that ' +
+      'needs 128 GB is refused before a byte is downloaded.',
+  },
+  {
+    q: 'Can I use Claude Code, opencode or Open WebUI with it?',
+    a: 'Yes. The box serves OpenAI- and Anthropic-compatible APIs. opencode is wired to the local model at install, and ' +
+      'Claude Code, VS Code Copilot, Open WebUI and Cursor are set up in the clients guide of the repo.',
+  },
+  {
+    q: 'How do I update it?',
+    a: 'Run the same command again. An update pins the new images and weights the same way, and the lane that serves ' +
+      'proves it serves before the update ends.',
+  },
+  {
+    q: 'How fast is it?',
+    a: 'Qwen3.8-27B answers at 71.4 tok/s (greedy median of ./bench.sh) and 135 to 148 tok/s in all at 8 streams, with ' +
+      'a window of a million tokens. Every lane has its numbers and its method in BENCHMARKS.md.',
+  },
+  { q: 'Is it free?', a: 'Yes. It is open source under the MIT license.' },
+  {
+    q: 'Is it made by NVIDIA?',
+    a: 'No. It is an independent open-source project. It runs on NVIDIA DGX OS and serves models with engines such as SGLang and vLLM.',
+  },
+];
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: SITE.name,
+    description: SITE.sentence,
+    url: SITE.url + '/',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'NVIDIA DGX OS on GB10 (DGX Spark and partner machines)',
+    softwareVersion: SITE.version,
+    datePublished: SITE.firstRelease,
+    dateModified: SITE.versionDate,
+    license: 'https://opensource.org/licenses/MIT',
+    codeRepository: SITE.repo,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    author: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    installUrl: SITE.repo + '#quickstart',
+    downloadUrl: SITE.releases,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+
+const clients = ['Claude Code', 'opencode', 'Hermes Agent', 'Open WebUI', 'Cursor', 'VS Code Copilot', 'LiteLLM', 'OpenAI SDK', 'Anthropic SDK'];
+---
+<Base title={title} description={description} path="/" jsonld={jsonld}>
+  <section class="stage">
+    <div class="wrap hero">
+      <div>
+        <h1>One command turns a DGX Spark into a private AI server</h1>
+        <p class="lead">{SITE.sentence}</p>
+        <p class="privacy">{SITE.privacy}</p>
+        <Command />
+        <p class="read-first">
+          Prefer to read it first? Clone the repo and run <code>./install.sh</code>: that is all the one-liner does.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={SITE.repo}>Open the repo on GitHub</a>
+          <a class="btn btn-ghost" href="#lanes">See the nine lanes</a>
+        </div>
+      </div>
+      <figure class="phone" data-tour>
+        <video autoplay muted loop playsinline preload="metadata" poster="/media/tour-poster.webp" width="540" height="960" aria-label="The cockpit driving the box from a laptop and a phone">
+          <source src="/media/tour-loop.mp4" type="video/mp4" />
+        </video>
+        <button class="btn play" type="button" data-play>Watch the 49-second tour, with sound</button>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="lanes" aria-labelledby="lanes-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="lanes-h">Nine lanes, one box, one at a time</h2>
+        <p>
+          A recipe starts one model. This repo installs nine, pinned and measured, and lets them take turns in the same
+          128 GB pool: load one from the cockpit, and it serves while the others wait on disk.
+        </p>
+      </div>
+      <LanePool />
+
+      <h3 style="margin-top:56px;margin-bottom:18px">Every lane, measured on {SITE.referenceBox}</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Lane</th><th scope="col">Headline</th><th scope="col">Also measured</th><th scope="col">Method</th></tr></thead>
+          <tbody>
+            {lanes.map((l) => (
+              <tr>
+                <th scope="row"><span class="dot" style={`background:${l.hue}`}></span><a href={`/models/${l.slug}/`}>{l.name}</a><div class="muted" style="font-weight:400;font-size:14px">{l.build}</div></th>
+                <td class="n">{l.value} {l.unit}<div class="muted" style="font-weight:400;font-size:14px;white-space:normal">{l.what}</div></td>
+                <td>{l.facts.join('. ')}.</td>
+                <td><a href={l.receipt.href}>{l.receipt.source}</a></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:16px">
+        Also on the box: speech on the CPU, beside any lane (Qwen3-ASR hears 30 languages, Kokoro speaks seven), and a
+        System One endpoint that answers with calibrated probabilities instead of text.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="why-h">
+    <div class="wrap">
+      <div class="trap">
+        <h3>The GB10 unified-memory trap</h3>
+        <p>
+          On a Spark the hard part comes after the first model. SGLang's memory accounting misses 25 to 40 GB of
+          transient allocations in the shared pool, and a pool pushed to zero freezes the box until a power cycle.
+          <a href={gh('docs/gb10-memory.md')}>Read how the trap works</a>.
+        </p>
+      </div>
+      <div class="section-head">
+        <h2 id="why-h">What lets nine lanes live on one box</h2>
+      </div>
+      <div class="reasons">
+        <div>
+          <h3>Pinned and proved</h3>
+          <p>Engine images are pinned by digest and checkpoints by revision. The lane that serves proves it serves before the install ends, and an update is the same command.</p>
+        </div>
+        <div>
+          <h3>One pool, lanes that take turns</h3>
+          <p>The cockpit shows what holds the memory and loads a lane with one button, from a laptop or a phone.</p>
+        </div>
+        <div>
+          <h3>Clients, wired or documented</h3>
+          <p>OpenAI- and Anthropic-compatible APIs, opencode wired to the local model, Claude Code through <code>claude-local</code>, and VS Code Copilot, Open WebUI and Cursor in <a href={gh('docs/clients.md')}>the clients guide</a>.</p>
+        </div>
+        <div>
+          <h3>Measured, not claimed</h3>
+          <p>GSM8K 94.0% on the 27B and 97.41% on the flash lane, a tool-calling score of 91/100 on tool-eval-bench, every number with its method in <a href={gh('BENCHMARKS.md')}>BENCHMARKS.md</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tools-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="tools-h">Works with the tools you already use</h2>
+        <p>Point your agent or your app at the box instead of a cloud API. Same calls, your hardware.</p>
+      </div>
+      <ul class="clients">{clients.map((c) => <li>{c}</li>)}</ul>
+      <div class="endpoints">
+        <div class="endpoint"><span class="muted">OpenAI</span><code>http://your-spark:30001/v1</code></div>
+        <div class="endpoint"><span class="muted">Anthropic</span><code>http://your-spark:30001</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="machines-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="machines-h">Built for every GB10 machine</h2>
+        <p>Same chip, same DGX OS, same installer. It reads how much memory the box has, not which brand is on it.</p>
+      </div>
+      <ul class="machines">
+        {machines.map((m) => (
+          <li>
+            <a href={`/machines/${m.slug}/`}>
+              <span class="m-maker">{m.maker}</span>
+              <span class="m-name">{m.name}</span>
+              <span class="tags">{m.memory.map((g) => <span class:list={['tag', g === '64' && 't64']}>{g} GB</span>)}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="callout">
+        <p><strong>Bought a 64 GB Spark?</strong> It installs what fits and serves NVIDIA's Nemotron 3.5 Bolt at 110.8 tok/s, measured at a 64 GB budget, with Qwen3.8-27B one Load away.</p>
+        <a class="btn" href="/dgx-spark-64gb/">See what fits on 64 GB</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="cockpit-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="cockpit-h">Drive it from a laptop or a phone</h2>
+        <p>The cockpit is installed by default. It shows what holds the memory, loads a lane with one button and runs a coding agent in the browser.</p>
+      </div>
+      <div class="shots">
+        <figure>
+          <img src="/img/cockpit-now.webp" alt="The cockpit's Now view: one pool of unified memory and what holds it, and the lanes in their rack with their makers' marks, the serving one edged in green" loading="lazy" width="1600" height="1000" />
+          <figcaption>The Now view: the pool, what holds it, and the rack of lanes.</figcaption>
+        </figure>
+        <div class="side">
+          <figure>
+            <img src="/img/cockpit-phone.webp" alt="The cockpit on a phone" loading="lazy" width="786" height="1704" />
+            <figcaption>The same cockpit on a phone.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="proof-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="proof-h">Proven before it ships</h2>
+      </div>
+      <div class="proof">
+        <div><div class="big">114</div><p>releases since {SITE.firstRelease}, each with its notes</p></div>
+        <div><div class="big">55</div><p>CI steps every release passes on GitHub</p></div>
+        <div><div class="big">56 of 56</div><p>real-client checks for {SITE.version}: 8 clients on 7 lanes</p></div>
+        <div><div class="big">21,967</div><p>views of the project's thread on NVIDIA's forum</p></div>
+      </div>
+      <ul class="cited">
+        <li><a href="https://kevinwelter.com/en/blog/qwen-3-8-lokal">Kevin Welter's write-up</a> of running Qwen3.8 on a DGX Spark follows this recipe.</li>
+        <li><a href="https://github.com/MiaAI-Lab/Qwen3.8-27B-SGLang-DGX-Spark">MiaAI-Lab</a> builds on its published config.</li>
+        <li><a href="https://github.com/Soulmate-Halo/heterogeneous-gpu-pd-lab/blob/main/results/dgx-spark-community-control.md">heterogeneous-gpu-pd-lab</a> takes its measurements as its DGX Spark reference.</li>
+        <li>It is listed in <a href="https://github.com/bidual/awesome-dgx-spark">awesome-dgx-spark</a>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="guides-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="guides-h">Answers for Spark owners</h2>
+        <p>Each guide answers one question owners ask, with the source of every number.</p>
+      </div>
+      <ul class="guide-list">
+        {guides.map((g) => (
+          <li><a href={`/guides/${g.slug}/`}><span class="g-title">{g.h1}</span><span class="muted">{g.description}</span></a></li>
+        ))}
+      </ul>
+      <p style="margin-top:22px"><a href="/guides/">All guides</a> and <a href="/models/">all nine models</a>.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="faq-h">Questions owners ask</h2></div>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <section class="end">
+    <div class="wrap">
+      <h2>Your own AI lab, in one box.</h2>
+      <Command />
+      <div class="hero-actions"><a class="btn btn-primary" href={SITE.repo}>Open the repo on GitHub</a></div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const fig = document.querySelector<HTMLElement>('[data-tour]');
+  const vid = fig?.querySelector('video');
+  if (vid && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { vid.removeAttribute('autoplay'); vid.pause(); }
+  const btn = fig?.querySelector<HTMLButtonElement>('[data-play]');
+  btn?.addEventListener('click', () => {
+    if (!vid) return;
+    vid.loop = false;
+    vid.muted = false;
+    vid.controls = true;
+    vid.src = '/media/tour-720.mp4';
+    vid.play().catch(() => {});
+    btn.remove();
+  });
+</script>

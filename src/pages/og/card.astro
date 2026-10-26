@@ -1,0 +1,32 @@
+---
+// The share card (1200x630), captured to /og/default.png by tools/og.mjs. Kept out of the sitemap and of search.
+import '../../styles/global.css';
+import { lanes } from '../../data/lanes';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>share card</title>
+    <style>
+      html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+      .card { width: 1200px; height: 630px; box-sizing: border-box; padding: 64px 72px 0; display: flex; flex-direction: column;
+        background: radial-gradient(760px 420px at 85% -10%, rgba(157,92,255,.40), transparent 62%), #1a0d33; color: #fff; font-family: var(--f-ui); }
+      .mark { display: flex; align-items: center; gap: 16px; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+      .mark img { width: 52px; height: 52px; }
+      h1 { margin-top: 44px; font-size: 76px; line-height: 0.98; max-width: 16ch; color: #fff; }
+      p { margin-top: 26px; font-size: 28px; color: rgba(255,255,255,.84); max-width: 46ch; }
+      .lanes { margin-top: auto; display: flex; height: 18px; margin-inline: -72px; }
+      .lanes span { flex: 1; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="mark"><img src="/favicon.svg" alt="" />dgx-spark-qwen38</div>
+      <h1>One command turns a DGX Spark into a private AI server</h1>
+      <p>Nine measured lanes, OpenAI and Anthropic APIs, a cockpit on your phone. No prompt leaves the box.</p>
+      <div class="lanes">{lanes.map((l) => <span style={`background:${l.hue}`}></span>)}</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,100 @@
+---
+import Base from '../../layouts/Base.astro';
+import Command from '../../components/Command.astro';
+import { SITE, gh } from '../../data/site';
+import { machines, type Machine } from '../../data/machines';
+import { lanes } from '../../data/lanes';
+
+export function getStaticPaths() {
+  return machines.map((m) => ({ params: { slug: m.slug }, props: { m } }));
+}
+interface Props { m: Machine }
+const { m } = Astro.props;
+const path = `/machines/${m.slug}/`;
+const has64 = m.memory.includes('64');
+const title = `Run local AI models on the ${m.titleName ?? m.short}`;
+const runOn = `${/^(Acer|ASUS|HP|MSI|NVIDIA)/.test(m.name) ? 'an' : 'a'} ${m.name}`;
+const description =
+  `The ${m.short} as a private AI server in one command: Qwen3.8-27B at 71.4 tok/s and eight more models on ` +
+  `128 GB${has64 ? ', Bolt on 64 GB' : ''}.`;
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: `Run local AI models on the ${m.name}`,
+    description,
+    dateModified: SITE.updated,
+    author: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    about: [m.name, ...m.aka, 'NVIDIA GB10'],
+    mainEntityOfPage: SITE.url + path,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: 'Machines', item: SITE.url + '/machines/' },
+      { '@type': 'ListItem', position: 3, name: m.name, item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/">{SITE.name}</a> / <a href="/machines/">Machines</a> / {m.name}</p>
+      <h1>Local AI on the {m.name}</h1>
+      <p class="lead">Also known as {m.aka.join(', ')}. {m.memoryNote}</p>
+    </header>
+    <div class="prose">
+      <p class="answer">
+        The {m.name} is a GB10 machine: NVIDIA's Grace Blackwell chip and its unified memory, on DGX OS. One command
+        turns it into a private AI server with OpenAI- and Anthropic-compatible APIs and a local cockpit, and no prompt,
+        image or video leaves the box.
+      </p>
+      {m.tested ? <p>{m.tested}</p> : (
+        <p>
+          The project is measured on an ASUS Ascent GX10, the same chip and the same system. The installer reads the
+          memory of the box, not its brand. If you run it on {runOn}, tell us how it went in
+          <a href={SITE.discussions}>the discussions</a>.
+        </p>
+      )}
+
+      <h2>With 128 GB: every lane</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Lane</th><th scope="col">Measured</th></tr></thead>
+          <tbody>
+            {lanes.map((l) => (
+              <tr>
+                <th scope="row"><span class="dot" style={`background:${l.hue}`}></span>{l.name}</th>
+                <td><span class="num" style="font-weight:640">{l.value} {l.unit}</span>, {l.what}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {has64 && (
+        <>
+          <h2>With 64 GB: Bolt and the 27B</h2>
+          <p>
+            A 64 GB box serves NVIDIA's Nemotron 3.5 Bolt at 110.8 tok/s (greedy median) and keeps Qwen3.8-27B one Load
+            away at 67.2 tok/s, both measured at a 64 GB budget on the reference box. Lanes that need 128 GB are refused
+            before anything is downloaded.
+            <a href="/dgx-spark-64gb/">What runs on 64 GB, in detail</a>.
+          </p>
+        </>
+      )}
+
+      <h2>Install it</h2>
+      <p>On stock DGX OS, run this on the box. The same command updates it later.</p>
+    </div>
+    <Command />
+    <dl class="receipt" style="margin-top:36px">
+      <dt>Numbers</dt><dd>measured on {SITE.referenceBox}, methods in <a href={gh('BENCHMARKS.md')}>BENCHMARKS.md</a></dd>
+      <dt>Maker's page</dt><dd><a href={m.official} rel="nofollow">{m.name}</a></dd>
+    </dl>
+    <div style="height:96px"></div>
+  </div>
+</Base>

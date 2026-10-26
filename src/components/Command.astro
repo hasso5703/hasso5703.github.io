@@ -1,0 +1,24 @@
+---
+import { SITE } from '../data/site';
+interface Props { label?: string }
+const { label = 'The one command' } = Astro.props;
+---
+<div class="cmd" data-cmd>
+  <pre aria-label={label}><code>{SITE.install}</code></pre>
+  <button type="button" data-copy>Copy</button>
+</div>
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('[data-cmd]')) {
+    const btn = box.querySelector<HTMLButtonElement>('[data-copy]');
+    const code = box.querySelector('code')?.textContent ?? '';
+    btn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'Copied';
+      } catch (e) {
+        btn.textContent = 'Select and copy';
+      }
+      setTimeout(() => (btn.textContent = 'Copy'), 2200);
+    });
+  }
+</script>

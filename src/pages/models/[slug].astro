@@ -1,0 +1,118 @@
+---
+import Base from '../../layouts/Base.astro';
+import Command from '../../components/Command.astro';
+import Faq from '../../components/Faq.astro';
+import { SITE } from '../../data/site';
+import { lanes, type Lane } from '../../data/lanes';
+
+export function getStaticPaths() {
+  return lanes.map((l) => ({ params: { slug: l.slug }, props: { l } }));
+}
+interface Props { l: Lane }
+const { l } = Astro.props;
+const path = `/models/${l.slug}/`;
+const headline = `${l.value} ${l.unit}`;
+const title = `Run ${l.name} on a DGX Spark: ${l.titleFact ?? `${headline}, measured`}`;
+const description =
+  `${l.name} on a DGX Spark: ${headline}, ${l.what}. Loaded with one button, ` +
+  (l.local ? 'driven from the cockpit.' : 'with OpenAI and Anthropic APIs.');
+const fits = l.fits64.startsWith('Yes');
+const faq = [
+  { q: `Can a DGX Spark run ${l.name}?`, a: `Yes. ${l.about} The installer of ${SITE.name} sets it up, and the cockpit loads it with one button.` },
+  { q: `How fast is ${l.name} on a DGX Spark?`, a: `${headline}, ${l.what}, measured on ${SITE.referenceBox}. ${l.facts.join('. ')}.` },
+  { q: `Does ${l.name} run on a 64 GB DGX Spark?`, a: l.fits64 },
+];
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: `Run ${l.name} on a DGX Spark`,
+    description,
+    dateModified: SITE.updated,
+    author: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    about: [l.name, l.maker, 'NVIDIA DGX Spark', 'NVIDIA GB10'],
+    mainEntityOfPage: SITE.url + path,
+    isBasedOn: l.receipt.href,
+  },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: 'Models', item: SITE.url + '/models/' },
+      { '@type': 'ListItem', position: 3, name: l.name, item: SITE.url + path },
+    ],
+  },
+];
+const others = lanes.filter((o) => o.id !== l.id);
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/">{SITE.name}</a> / <a href="/models/">Models</a> / {l.name}</p>
+      <h1>Run {l.name} on a DGX Spark</h1>
+      <p class="lead">{l.kind}, by {l.maker}. {l.build[0].toUpperCase() + l.build.slice(1)}.</p>
+    </header>
+    <div class="prose">
+      <p class="answer">{l.about} On {SITE.referenceBox}: <strong class="num">{headline}</strong>, {l.what}.</p>
+
+      <h2>Measured</h2>
+      <div class="lane-view" style={`--hue:${l.hue}`}>
+        <p class="metric" style="margin-top:0"><span class:list={['v', l.value.length > 7 && 'long']}>{l.value}</span><span class="u">{l.unit}</span></p>
+        <p class="metric-what">{l.what}</p>
+        <ul class="lane-facts">{l.facts.map((f) => <li>{f}</li>)}</ul>
+        <dl class="receipt">
+          <dt>Measured on</dt><dd>{SITE.referenceBox}, the project's reference box</dd>
+          <dt>How</dt><dd>{l.receipt.method}</dd>
+          <dt>Source</dt><dd><a href={l.receipt.href}>{l.receipt.source}</a></dd>
+        </dl>
+      </div>
+
+      <h2>Load it</h2>
+      <p>
+        From the cockpit: open the Lanes view, pick <strong>{l.name}</strong> and press <strong>Load</strong>{l.load.cockpit ? ` (${l.load.cockpit})` : ''}.
+        From a terminal, in the repo folder on the box:
+      </p>
+      <pre class="code"><code>{l.load.prepare ? `./prepare-lane.sh ${l.load.prepare}   # the first time only, builds the lane\n` : ''}./switch-model.sh {l.load.target}   # switches the boot, then prints the commands to run</code></pre>
+      <p><code>switch-model.sh</code> never restarts an engine itself: it prints the exact stop and start commands. The cockpit's Load runs them for you.</p>
+      {l.load.variants && <p>Other checkpoints of the same lane load the same way: <code>{l.load.variants}</code>.</p>}
+
+      <h2>On a 64 GB DGX Spark</h2>
+      <p>{l.fits64} {fits ? <a href="/dgx-spark-64gb/">What runs on 64 GB</a> : <>A 64 GB box serves Nemotron 3.5 Bolt and Qwen3.8-27B: <a href="/dgx-spark-64gb/">what runs on 64 GB</a>.</>}</p>
+
+      {l.local ? (
+        <>
+          <h2>Use it</h2>
+          <p>From the cockpit: its {l.local.view} view drives the lane. The lane listens on <code>127.0.0.1:{l.local.port}</code>, on the box itself, and not through the API on port 30001.</p>
+        </>
+      ) : (
+        <>
+          <h2>Use it from your tools</h2>
+          <p>
+            The box serves OpenAI- and Anthropic-compatible APIs on port 30001, with an API key. Claude Code, opencode,
+            Open WebUI and the OpenAI and Anthropic SDKs point there instead of a cloud: see
+            <a href="/guides/claude-code-local-model-dgx-spark/">Claude Code with a local model</a> and
+            <a href="/guides/opencode-local-model-dgx-spark/">opencode with a local model</a>.
+          </p>
+        </>
+      )}
+
+      <h2>Install it</h2>
+      <p>One command, on stock DGX OS. The same command updates it later.</p>
+    </div>
+    <Command />
+    <section class="section" style="padding-top:72px" aria-labelledby="faq-h">
+      <div class="section-head"><h2 id="faq-h">Questions about {l.name} on a DGX Spark</h2></div>
+      <Faq items={faq} />
+    </section>
+    <section style="padding-bottom:96px">
+      <h2 style="font-size:clamp(1.4rem,2.4vw,1.8rem);margin-bottom:16px">The other lanes</h2>
+      <ul class="machines">
+        {others.map((o) => (
+          <li><a href={`/models/${o.slug}/`}><span class="m-maker">{o.maker}</span><span class="m-name">{o.name}</span><span class="muted" style="font-size:14px">{o.value} {o.unit}, {o.what}</span></a></li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Base>
