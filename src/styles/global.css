@@ -125,8 +125,9 @@ p { margin: 0; max-width: var(--measure); }
 .wordmark { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 720; letter-spacing: -0.02em; white-space: nowrap; }
 .wordmark svg { width: 26px; height: 26px; flex: none; }
 .nav { display: flex; gap: 22px; margin-left: auto; align-items: center; }
-.nav a { color: var(--ink-2); text-decoration: none; font-size: 15px; font-weight: 520; }
-.nav a:hover, .nav a[aria-current='page'] { color: var(--ink); }
+.head-tools { display: flex; gap: 22px; align-items: center; }
+.nav a, .head-tools a { color: var(--ink-2); text-decoration: none; font-size: 15px; font-weight: 520; }
+.nav a:hover, .nav a[aria-current='page'], .head-tools a:hover { color: var(--ink); }
 .theme-toggle {
   border: 1px solid var(--rule); background: transparent; color: var(--ink-2); border-radius: 999px;
   width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer;
@@ -135,12 +136,23 @@ p { margin: 0; max-width: var(--measure); }
 .gh-link svg { width: 18px; height: 18px; }
 @media (max-width: 760px) {
   .nav .hide-s { display: none; }
-  .nav { gap: 14px; }
+  .nav, .head-tools { gap: 14px; }
   .gh-link span { display: none; }
 }
 @media (max-width: 400px) {
   .wordmark span { font-size: 15px; }
   .site-head .wrap { gap: 12px; }
+}
+/* Phones: the name and the tools on one line, the four links on the next, all of them shown. Not sticky there, so a
+   two-line header does not take a reader's screen. */
+@media (max-width: 560px) {
+  html { scroll-padding-top: 16px; }
+  .site-head { position: static; }
+  .site-head .wrap { flex-wrap: wrap; row-gap: 0; min-height: 0; padding-top: 10px; }
+  .head-tools { margin-left: auto; }
+  .nav { order: 3; flex-basis: 100%; margin-left: 0; justify-content: space-between; }
+  .nav .hide-s { display: inline; }
+  .nav a { padding: 10px 0 12px; }
 }
 
 /* buttons */
