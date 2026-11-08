@@ -6,7 +6,7 @@ description: "Ollama, NVIDIA's playbooks, an engine you tune or a one-command in
 h1: "How to run a local LLM on a DGX Spark"
 published: "2026-10-26"
 rank: 1
-answer: "Four ways, from the quickest to start to the fastest to run: Ollama, NVIDIA's playbooks, an engine you tune yourself, or an installer that pins and tunes it for you. The speed depends less on the engine than on the quantization, the drafter and the memory settings: without speculative decoding a dense 32B reads all its weights at every token (Ollama's own table: 9.411 tok/s for qwen3 32B), while this project measures Qwen3.8-27B at <strong>71.4 tok/s</strong> with NVFP4 and a DFlash2 drafter."
+answer: "Four ways, from the quickest to start to the fastest to run: Ollama, NVIDIA's playbooks, an engine you tune yourself, or an installer that pins and tunes it for you. The speed depends less on the engine than on the quantization, the drafter and the memory settings: without speculative decoding a dense 32B reads all its weights at every token (Ollama's own table: 9.411 tok/s for qwen3 32B), while this project measures Qwen3.8 27B at <strong>65.2 to 68.5 tok/s</strong> with NVFP4 and a DFlash2 drafter."
 faq:
   - q: "What is the easiest way to run an LLM on a DGX Spark?"
     a: "Ollama: one install and a model by name, and NVIDIA's playbooks use it for Open WebUI and a coding agent. In one owner's same-harness test it was slower than vLLM alone on three models of four, and at 8 concurrent requests its total stayed at about its single-stream figure."
@@ -53,7 +53,7 @@ related:
 
 Single-stream decode on a GB10 is bound by memory bandwidth: the chip advertises 273 GB/s, about 225 GB/s is measurable, and each decode step of a dense model reads all its weights. Two levers move the result: the bytes each step reads (the quantization) and the tokens each step accepts (speculative decoding, where a drafter proposes tokens and the model verifies them, so the output does not change).
 
-That is why the same box gives such different numbers. [Ollama's own Spark table](https://ollama.com/blog/nvidia-spark-performance) lists the dense qwen3 32B at 9.411 tok/s at q4_K_M, against 58.27 for the mixture of experts gpt-oss 20B. With NVFP4 weights and a calibrated DFlash2 drafter, this project measures Qwen3.8-27B at a 71.4 tok/s greedy median on `./bench.sh`.
+That is why the same box gives such different numbers. [Ollama's own Spark table](https://ollama.com/blog/nvidia-spark-performance) lists the dense qwen3 32B at 9.411 tok/s at q4_K_M, against 58.27 for the mixture of experts gpt-oss 20B. With NVFP4 weights and a calibrated DFlash2 drafter, this project measures Qwen3.8 27B at a 65.2 to 68.5 tok/s greedy median on `./bench.sh` (two runs, 2026-11-05).
 
 ## How do the engines compare on the same model?
 

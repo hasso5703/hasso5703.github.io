@@ -71,7 +71,7 @@ Then came its frozen battery (`./bench-matrix.sh`, greedy), with SGLang driving 
 
 The block drafter has the highest ceiling on structured output and a floor on prose. The MTP engines sit in a stable middle, and SGLang with MTP was the best of them on prose, ahead of llama.cpp there too. The repo's GGUF note adds prefill, which an agent loop feels first: its SGLang speculative path measured about 3x ahead of the stable-MTP engines it was compared with, llama.cpp among them.
 
-Drafters kept improving. With the calibrated NVFP4 DFlash2 drafter the 27B lane has served since v1.9, the same battery measured 40 tok/s on English code and 34 on German, and 22 / 20 / 18 on prose in English, French and German, against 24-28 and 17-20 for the stable-MTP engines. The lane's headline today is a 71.4 tok/s greedy median on `./bench.sh`.
+Drafters kept improving. With the calibrated NVFP4 DFlash2 drafter the 27B lane has served since v1.9, the same battery measured 40 tok/s on English code and 34 on German, and 22 / 20 / 18 on prose in English, French and German, against 24-28 and 17-20 for the stable-MTP engines. The lane's headline today is a 65.2 to 68.5 tok/s greedy median on `./bench.sh` (two runs on 2026-11-05, SGLang 0.5.22 without torch.compile), after 71.4 on SGLang 0.5.19 with it (2026-09-17).
 
 ## Does what you generate change the speed?
 
