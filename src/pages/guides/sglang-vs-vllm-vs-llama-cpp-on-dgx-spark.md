@@ -110,7 +110,7 @@ The two Flash-Next lanes also split the wins (different builds of the model, so 
 | Lane | Engine | Why |
 |---|---|---|
 | Qwen3.8-27B (four targets) | SGLang + DFlash2 | the fastest configuration the repo measured for it |
-| Qwen3.8-Flash-Next 176B (three targets) | SGLang + NEXTN | moved from vLLM in v1.5 (August 2026), when prefix caching worked on SGLang and a GB10 bug blocked it on vLLM: a 30K-token conversation came back in 0.5 s instead of 18.4 s |
+| Qwen3.8 Flash-Next (176B, three builds) | SGLang + NEXTN | moved from vLLM in v1.5 (August 2026), when prefix caching worked on SGLang and a GB10 bug blocked it on vLLM: a 30K-token conversation came back in 0.5 s instead of 18.4 s |
 | Flash FP4-Local | vLLM | NVIDIA's build of Flash-Next, run with the command its model card gives for a DGX Spark |
 | Kolibri-1 | vLLM + Aleph Alpha's plugin | SGLang cannot load it |
 | Nemotron 3.5 Bolt, Super VL | vLLM | the way NVIDIA's model cards serve them on a DGX Spark |

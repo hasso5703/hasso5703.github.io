@@ -15,7 +15,7 @@ const has64 = m.memory.includes('64');
 const title = `Run local AI models on the ${m.titleName ?? m.short}`;
 const runOn = `${/^(Acer|ASUS|HP|MSI|NVIDIA)/.test(m.name) ? 'an' : 'a'} ${m.name}`;
 const description =
-  `The ${m.short} as a private AI server in one command: Qwen3.8-27B at 71.4 tok/s and eight more models on ` +
+  `The ${m.short} as a private AI server in one command: Qwen3.8 27B at 65.2 to 68.5 tok/s and eight more models on ` +
   `128 GB${has64 ? ', Bolt on 64 GB' : ''}.`;
 const jsonld = [
   {

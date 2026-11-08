@@ -11,7 +11,7 @@ faq:
   - q: "What is the easiest way to run an LLM on a DGX Spark?"
     a: "Ollama: one install and a model by name, and NVIDIA's playbooks use it for Open WebUI and a coding agent. In one owner's same-harness test it was slower than vLLM alone on three models of four, and at 8 concurrent requests its total stayed at about its single-stream figure."
   - q: "Is a DGX Spark fast enough for local LLMs?"
-    a: "It depends on the setup more than on the chip. A dense model at 4 bits without speculative decoding is bound by memory bandwidth (9.411 tok/s for qwen3 32B in Ollama's table). With NVFP4 and a drafter, this project measures Qwen3.8-27B at 71.4 tok/s (greedy median), and mixtures of experts go further: Nemotron 3.5 Bolt at 140 tok/s rewriting code."
+    a: "It depends on the setup more than on the chip. A dense model at 4 bits without speculative decoding is bound by memory bandwidth (9.411 tok/s for qwen3 32B in Ollama's table). With NVFP4 and a drafter, this project measures Qwen3.8 27B at 65.2 to 68.5 tok/s (greedy median), and mixtures of experts go further: Nemotron 3.5 Bolt at 140 tok/s rewriting code."
   - q: "Which engine is fastest on a DGX Spark?"
     a: "None on every job. On the same Qwen3.8-27B, SGLang with a block drafter led on code, and plain MTP heads held up better on free prose. What you generate and the drafter matter more than the engine."
   - q: "Can a DGX Spark run several models at once?"
@@ -71,9 +71,9 @@ It installs nine lanes, each pinned (engine images by digest, checkpoints by rev
 
 | Lane | Measured |
 |---|---|
-| Qwen3.8-27B, NVFP4 with a DFlash2 drafter, on SGLang | 71.4 tok/s, greedy median, one request, with a 1M-token window |
+| Qwen3.8 27B NVFP4 · RadixArk, with a DFlash2 drafter, on SGLang 0.5.22 | 65.2 to 68.5 tok/s, greedy median in two runs, one request, with a 1M-token window |
 | Nemotron 3.5 Bolt, with its drafter, on vLLM | 140 tok/s, rewriting code, one request, reasoning off |
-| Qwen3.8-Flash-Next 176B, on SGLang | 47.9 tok/s on code, with FLASH_TIER=context |
+| Qwen3.8 Flash-Next (176B), on SGLang nightly 53295c6 | 47.9 tok/s on code, with FLASH_TIER=context |
 
 [All nine lanes, with their methods](/models/).
 

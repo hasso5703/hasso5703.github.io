@@ -64,7 +64,7 @@ No. Its benchmarks cover SGLang, vLLM and llama.cpp on one reference box, an ASU
 
 Single-stream decode on this chip is bound by memory bandwidth: the GB10 advertises 273 GB/s, about 225 GB/s is measurable, and each decode step of a dense model reads all its weights. [Ollama's own Spark table](https://ollama.com/blog/nvidia-spark-performance) shows the pattern: qwen3 32B at q4_K_M decodes at 9.411 tok/s, while the mixtures of experts gpt-oss 20B and 120B, in MXFP4, reach 58.27 and 41.14, measured with Ollama v0.12.6 on firmware 580.95.05 in October 2025.
 
-One way past that limit on a dense model is speculative decoding: a drafter proposes several tokens and the model checks them in one step, so one read of the weights yields more than one token. That is how this project's dense Qwen3.8-27B lane reaches a 71.4 tok/s greedy median on its `./bench.sh` probes. Compare like with like, too: on the reference box free prose ran slower than code with every engine and drafter tried, about 2x slower with a block drafter.
+One way past that limit on a dense model is speculative decoding: a drafter proposes several tokens and the model checks them in one step, so one read of the weights yields more than one token. That is how this project's dense Qwen3.8 27B lane reaches a 65.2 to 68.5 tok/s greedy median on its `./bench.sh` probes. Compare like with like, too: on the reference box free prose ran slower than code with every engine and drafter tried, about 2x slower with a block drafter.
 
 ## What should you check first?
 
@@ -96,7 +96,7 @@ None of the figures above are this project's. It measured llama.cpp, which also 
 | Reasoning (FR) | 27.5 | 41-44 |
 | Free prose EN / FR / DE | 17.7 / 18.2 / 18.0 | 22 / 20 / 17 |
 
-Its lanes on the reference box include Qwen3.8-27B on SGLang at a 71.4 tok/s greedy median and 135-148 tok/s in all at 8 streams, Nemotron 3.5 Bolt on vLLM at 140 tok/s rewriting code and 201.2 tok/s in all at 16 streams, and Kolibri-1 on vLLM at 48.0 tok/s with one stream and 202.0 with 16. Those are other models than the owners', so they show what each lane delivers, not what Ollama would do with the same models.
+Its lanes on the reference box include Qwen3.8 27B on SGLang 0.5.22 at a 65.2 to 68.5 tok/s greedy median and 80.6 tok/s in all at 4 requests on 8,192-token prompts, Nemotron 3.5 Bolt on vLLM at 140 tok/s rewriting code and 201.2 tok/s in all at 16 streams, and Kolibri-1 on vLLM at 48.0 tok/s with one stream and 202.0 with 16. Those are other models than the owners', so they show what each lane delivers, not what Ollama would do with the same models.
 
 ## Should you move off Ollama?
 

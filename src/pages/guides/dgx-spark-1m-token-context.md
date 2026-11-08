@@ -49,11 +49,11 @@ Three lanes, on a 128 GB box:
 
 | Lane | Window (tokens) | KV cache measured | How it is served |
 |---|---|---|---|
-| Qwen3.8-27B, stock or uncensored (the default lane) | 1,010,000 | 832,993 to 922,094 tokens over sixteen boots | SGLang, YaRN patched into the configs |
+| Qwen3.8 27B, NVFP4 · RadixArk or abliterated NVFP4 · edp1096 (the default lane) | 1,010,000 | 832,993 to 922,094 tokens over sixteen boots | SGLang, YaRN patched into the configs |
 | Nemotron 3.5 Super VL, 120B with 12B active | 1,048,576 | 1,166,215 to 1,382,265 tokens over two boots | vLLM, the model's whole window, 4 requests at a time |
 | Ornith 1.5 122B | 1,048,576 | 1,301,680 tokens, fixed | vLLM, YaRN at factor 4 over its native 262,144 |
 
-The flash lane (Qwen3.8-Flash-Next 176B) stays at 262,144 tokens with a bf16 KV cache. A 1M window for it on one GB10 is bought with an fp8 KV cache, which two independent parties measured as a quality loss on agentic work. Bolt and Kolibri-1 serve 262,144 too. On a 64 GB DGX Spark the installer refuses `CONTEXT_MODE=1m` and both 1M lanes, as they need a 128 GB box.
+The flash lane (Qwen3.8 Flash-Next, 176B) stays at 262,144 tokens with a bf16 KV cache. A 1M window for it on one GB10 is bought with an fp8 KV cache, which two independent parties measured as a quality loss on agentic work. Bolt and Kolibri-1 serve 262,144 too. On a 64 GB DGX Spark the installer refuses `CONTEXT_MODE=1m` and both 1M lanes, as they need a 128 GB box.
 
 ## How does the 27B serve 1,010,000 tokens?
 

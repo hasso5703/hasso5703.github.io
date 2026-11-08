@@ -12,7 +12,7 @@ const guides = Object.values(import.meta.glob<{ frontmatter: Fm }>('./guides/*.m
 
 const title = 'Alzeo: one command, a private AI server on DGX Spark';
 const description =
-  'Open-source installer for the DGX Spark and every GB10 machine: Qwen3.8-27B at 71.4 tok/s, a 1M context, ' +
+  'Open-source installer for the DGX Spark and every GB10 machine: Qwen3.8 27B at 65.2 to 68.5 tok/s, a 1M context, ' +
   'eight more measured models, OpenAI and Anthropic APIs.';
 
 const faq = [
@@ -45,7 +45,7 @@ const faq = [
   },
   {
     q: 'How fast is it?',
-    a: 'Qwen3.8-27B answers at 71.4 tok/s (greedy median of ./bench.sh) and 135 to 148 tok/s in all at 8 streams, with ' +
+    a: 'Qwen3.8 27B answers at 65.2 to 68.5 tok/s (greedy median of ./bench.sh, two runs on 2026-11-05) and 80.6 tok/s in all at 4 requests on 8,192-token prompts, with ' +
       'a window of a million tokens. Every lane has its numbers and its method in BENCHMARKS.md.',
   },
   { q: 'Is it free?', a: 'Yes. It is open source under the MIT license.' },
@@ -190,7 +190,7 @@ const clients = ['Claude Code', 'opencode', 'Hermes Agent', 'Open WebUI', 'Curso
         </div>
         <div>
           <h3>Measured, not claimed</h3>
-          <p>GSM8K 94.0% on the 27B and 97.41% on the flash lane, a tool-calling score of 91/100 on tool-eval-bench, every number with its method in <a href={gh('BENCHMARKS.md')}>BENCHMARKS.md</a>.</p>
+          <p>GSM8K 99.2% on the 27B (250 questions) and 97.41% on the flash lane, a tool-calling score of 91/100 on tool-eval-bench, every number with its method in <a href={gh('BENCHMARKS.md')}>BENCHMARKS.md</a>.</p>
         </div>
       </div>
     </div>

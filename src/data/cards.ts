@@ -20,7 +20,7 @@ export function cards(): Card[] {
       sub: 'Nemotron 3.5 Bolt at 110.8 tok/s and Qwen3.8-27B at 67.2 tok/s, measured at a 64 GB budget.',
       hue: '#84cc16',
     },
-    { key: 'models', kicker: 'Models', title: 'Nine models, measured on a DGX Spark', sub: 'Qwen3.8-27B at 71.4 tok/s with a 1M context, a 176B on one box, images, and video with sound.' },
+    { key: 'models', kicker: 'Models', title: 'Nine models, measured on a DGX Spark', sub: 'Qwen3.8 27B at 65.2 to 68.5 tok/s with a 1M context, a 176B on one box, images, and video with sound.' },
     ...lanes.map((l) => ({ key: `models-${l.slug}`, kicker: `A model by ${l.maker}`, title: `Run ${l.name} on a DGX Spark`, metric: `${l.value} ${l.unit}`, sub: l.what, hue: l.hue })),
     { key: 'machines', kicker: 'Machines', title: 'Every GB10 machine runs it', sub: 'DGX Spark, ASUS, Dell, HP, Lenovo, MSI, GIGABYTE and Acer, with 128 GB or 64 GB.' },
     ...machines.map((m) => ({ key: `machines-${m.slug}`, kicker: m.maker, title: `Local AI on the ${m.short}`, sub: 'Measured lanes, OpenAI and Anthropic APIs and a local cockpit, in one command.' })),
