@@ -19,11 +19,11 @@ faq:
     a: "Yes. The cockpit's Agent view runs opencode web on the box, from a laptop or a phone."
 sources:
   - label: "README.md, opencode integration"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/README.md#opencode-integration"
+    href: "https://github.com/hasso5703/alzeo/blob/main/README.md#opencode-integration"
   - label: "docs/opencode.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/opencode.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/opencode.md"
   - label: "docs/clients.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/clients.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/clients.md"
 related:
   - label: "Claude Code with a local model on a DGX Spark"
     href: "/guides/claude-code-local-model-dgx-spark/"

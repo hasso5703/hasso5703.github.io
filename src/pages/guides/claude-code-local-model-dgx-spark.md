@@ -19,9 +19,9 @@ faq:
     a: "Yes. Point ANTHROPIC_BASE_URL at the box's port 30001, put the API key in ANTHROPIC_AUTH_TOKEN, and set the context and answer budget shown on this page."
 sources:
   - label: "docs/clients.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/clients.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/clients.md"
   - label: "README.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/README.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/README.md"
 related:
   - label: "What to run on a 64 GB DGX Spark"
     href: "/dgx-spark-64gb/"

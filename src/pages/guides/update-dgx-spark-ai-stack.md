@@ -17,9 +17,9 @@ faq:
     a: "No. A lane the box never had gets its units, and its first Load from the cockpit prepares it. A lane already on the box is updated whole."
 sources:
   - label: "README.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/README.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/README.md"
   - label: "Releases"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/releases"
+    href: "https://github.com/hasso5703/alzeo/releases"
 related:
   - label: "Why a DGX Spark freezes when it loads a model"
     href: "/guides/dgx-spark-freezes-when-loading-a-model/"
@@ -45,4 +45,4 @@ Updating a box adds the lanes it does not have yet, on demand: a lane the box ne
 
 ## How do I know an update is out?
 
-The cockpit's Settings view shows whether a newer release is out and gives you the command that updates the stack. Every release has its notes on [GitHub](https://github.com/hasso5703/dgx-spark-qwen38/releases).
+The cockpit's Settings view shows whether a newer release is out and gives you the command that updates the stack. Every release has its notes on [GitHub](https://github.com/hasso5703/alzeo/releases).

@@ -19,7 +19,7 @@ faq:
     a: "Only on the box itself: since v1.17 the engine binds 127.0.0.1. Clients connect to the proxy on 30001, which adds keepalives and refuses what would take the engine down."
 sources:
   - label: "docs/clients.md, Standard OpenAI-compatible clients"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/clients.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/clients.md"
 related:
   - label: "Claude Code with a local model on a DGX Spark"
     href: "/guides/claude-code-local-model-dgx-spark/"

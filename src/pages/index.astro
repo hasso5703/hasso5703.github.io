@@ -10,7 +10,7 @@ import { machines } from '../data/machines';
 type Fm = { slug: string; h1: string; description: string; rank?: number };
 const guides = Object.values(import.meta.glob<{ frontmatter: Fm }>('./guides/*.md', { eager: true })).map((m) => m.frontmatter).sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99) || a.h1.localeCompare(b.h1));
 
-const title = 'dgx-spark-qwen38: one command, a private AI server on DGX Spark';
+const title = 'Alzeo: one command, a private AI server on DGX Spark';
 const description =
   'Open-source installer for the DGX Spark and every GB10 machine: Qwen3.8-27B at 71.4 tok/s, a 1M context, ' +
   'eight more measured models, OpenAI and Anthropic APIs.';
@@ -74,6 +74,7 @@ const jsonld = [
     '@type': ['SoftwareApplication', 'SoftwareSourceCode'],
     '@id': SITE.url + '/#software',
     name: SITE.name,
+    alternateName: SITE.formerName,
     description: SITE.sentence,
     url: SITE.url + '/',
     applicationCategory: 'DeveloperApplication',
@@ -109,6 +110,9 @@ const clients = ['Claude Code', 'opencode', 'Hermes Agent', 'Open WebUI', 'Curso
         <Command />
         <p class="read-first">
           Prefer to read it first? Clone the repo and run <code>./install.sh</code>: that is all the one-liner does.
+        </p>
+        <p class="read-first">
+          Alzeo was named {SITE.formerName} until 2026-11-01. A box installed before updates as it always did.
         </p>
         <div class="hero-actions">
           <a class="btn btn-primary" href={SITE.repo}>Open the repo on GitHub</a>

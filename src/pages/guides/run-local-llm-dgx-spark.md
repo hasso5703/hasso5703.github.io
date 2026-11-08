@@ -28,9 +28,9 @@ sources:
   - label: "NVIDIA blog, 2026-10-02: DGX Spark 64GB and NVIDIA Sync"
     href: "https://blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync/"
   - label: "BENCHMARKS.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/BENCHMARKS.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/BENCHMARKS.md"
   - label: "README.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/README.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/README.md"
 related:
   - label: "Which inference engine should you run on a DGX Spark?"
     href: "/guides/sglang-vs-vllm-vs-llama-cpp-on-dgx-spark/"

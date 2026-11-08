@@ -21,19 +21,19 @@ faq:
     a: "Yes. A cold prefill can keep the connection silent for tens of minutes, and the proxy (port 30001 by default) fills that silence with protocol-correct keepalives every 10 s. Agent clients must use it, not the engine port."
 sources:
   - label: "README.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/README.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/README.md"
   - label: "docs/context-1m.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/context-1m.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/context-1m.md"
   - label: "docs/opencode.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/opencode.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/opencode.md"
   - label: "docs/clients.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/clients.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/clients.md"
   - label: "docs/nemotron-super-lane.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/nemotron-super-lane.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/nemotron-super-lane.md"
   - label: "docs/ornith-lane.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/ornith-lane.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/ornith-lane.md"
   - label: "BENCHMARKS.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/BENCHMARKS.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/BENCHMARKS.md"
 related:
   - label: "What to run on a 64 GB DGX Spark"
     href: "/dgx-spark-64gb/"
@@ -93,9 +93,9 @@ Ornith measured the cost. YaRN at factor 4 costs short texts 0.4% of perplexity 
 
 ```bash
 # a fresh install serves the 27B at 1,010,000 tokens
-curl -fsSL https://raw.githubusercontent.com/hasso5703/dgx-spark-qwen38/main/get.sh | bash
+curl -fsSL https://get.alzeo.ai | bash
 # the 262,144 window instead
-curl -fsSL https://raw.githubusercontent.com/hasso5703/dgx-spark-qwen38/main/get.sh | CONTEXT_MODE=native bash
+curl -fsSL https://raw.githubusercontent.com/hasso5703/alzeo/main/get.sh | CONTEXT_MODE=native bash
 # on an installed box, from the clone
 CONTEXT_MODE=native ./install.sh
 CONTEXT_MODE=1m ./install.sh

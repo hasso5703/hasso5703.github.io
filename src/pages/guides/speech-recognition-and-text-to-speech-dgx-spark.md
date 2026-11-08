@@ -18,9 +18,9 @@ faq:
     a: "Not yet. It is opt-in: from a clone, after ./install.sh, run ./install-speech.sh. It takes about 3 minutes and is proved before it ends. The one command's updates leave it as it is, so run ./install-speech.sh again after each one."
 sources:
   - label: "README.md, Speech"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/README.md#speech-qwen3-asr-and-kokoro-on-the-cpu-beside-any-lane"
+    href: "https://github.com/hasso5703/alzeo/blob/main/README.md#speech-qwen3-asr-and-kokoro-on-the-cpu-beside-any-lane"
   - label: "docs/speech-lane.md"
-    href: "https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/speech-lane.md"
+    href: "https://github.com/hasso5703/alzeo/blob/main/docs/speech-lane.md"
 related:
   - label: "An OpenAI-compatible API on a DGX Spark"
     href: "/guides/openai-compatible-api-dgx-spark/"
@@ -51,4 +51,4 @@ Any audio ffmpeg reads, a phone's m4a or a browser's webm among them. Long recor
 
 ## Where are the details?
 
-The languages, every number and the limits are in [docs/speech-lane.md](https://github.com/hasso5703/dgx-spark-qwen38/blob/main/docs/speech-lane.md).
+The languages, every number and the limits are in [docs/speech-lane.md](https://github.com/hasso5703/alzeo/blob/main/docs/speech-lane.md).
