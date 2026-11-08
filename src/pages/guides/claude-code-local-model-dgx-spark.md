@@ -81,6 +81,6 @@ CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL=1   CLAUDE_CODE_AUTO_MODE_S
 
 With the 27B's 1M mode, the limit is the KV pool, not the window. The proxy refuses a prompt past 92% of the pool, and the pool is decided at boot (832,993 to 922,094 tokens over sixteen 27B boots on the reference box). Sized on the smallest pool, use `700000` with the default output, or `529000` with `CLAUDE_CODE_EXTRA_BODY='{"max_tokens":250000}'`. Set to the window, a session grows past what the proxy accepts and is refused mid-conversation rather than compacted.
 
-## A 500 error with ToolSearch in v1.40.2
+## ToolSearch works since v1.40.3
 
-With Claude Code's ToolSearch, which sends tool references in the conversation, the Qwen lanes of v1.40.2 answer with an HTTP 500 before generating. The fix is ready for the next release. Until then, start Claude Code with `ENABLE_TOOL_SEARCH=false`, in a new session.
+With Claude Code's ToolSearch, which sends tool references in the conversation, the Qwen lanes of v1.40.2 answered with an HTTP 500 before generating. v1.40.3 (2026-10-26) fixed it. A box on v1.40.2 gets the fix by running the install command again; `ENABLE_TOOL_SEARCH=false` was the workaround until then.
