@@ -16,7 +16,7 @@ faq:
   - q: "Does speculative decoding change the answers?"
     a: "No. The verify step only accepts tokens the target model would have emitted, so the output stays the model's own and only the speed changes."
   - q: "Which engines does this installer use?"
-    a: "SGLang for Qwen3.8-27B, Qwen3.8-Flash-Next and the image and video lanes, vLLM for Flash FP4-Local, Kolibri-1, Nemotron 3.5 Bolt, Nemotron 3.5 Super VL and Ornith 1.5 122B, and llama.cpp for the opt-in speech recognition on the CPU."
+    a: "SGLang for Qwen3.8-27B, Qwen3.8-Flash-Next and the image and video lanes, vLLM for Qwen3.8 Flash-Next FP4-Local, Kolibri-1, Nemotron 3.5 Bolt, Nemotron 3.5 Super VL and Ornith 1.5 122B, and llama.cpp for the opt-in speech recognition on the CPU."
   - q: "Will I get the same numbers on my Spark?"
     a: "Not exactly. They are point-in-time measurements on one machine, and acceptance lengths, so tok/s, vary with workload and language. ./bench-matrix.sh runs the same frozen battery against any engine on your own box."
 sources:
@@ -111,7 +111,7 @@ The two Flash-Next lanes also split the wins (different builds of the model, so 
 |---|---|---|
 | Qwen3.8-27B (four targets) | SGLang + DFlash2 | the fastest configuration the repo measured for it |
 | Qwen3.8 Flash-Next (176B, three builds) | SGLang + NEXTN | moved from vLLM in v1.5 (August 2026), when prefix caching worked on SGLang and a GB10 bug blocked it on vLLM: a 30K-token conversation came back in 0.5 s instead of 18.4 s |
-| Flash FP4-Local | vLLM | NVIDIA's build of Flash-Next, run with the command its model card gives for a DGX Spark |
+| Qwen3.8 Flash-Next FP4-Local | vLLM | NVIDIA's build of Flash-Next, run with the command its model card gives for a DGX Spark |
 | Kolibri-1 | vLLM + Aleph Alpha's plugin | SGLang cannot load it |
 | Nemotron 3.5 Bolt, Super VL | vLLM | the way NVIDIA's model cards serve them on a DGX Spark |
 | Ornith 1.5 122B | vLLM | the whole million-token window, a speed that holds on any text, a shorter boot |

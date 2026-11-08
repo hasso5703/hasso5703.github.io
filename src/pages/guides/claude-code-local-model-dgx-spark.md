@@ -46,7 +46,7 @@ The pair comes from the lane's opencode limits, which the installer and the cock
 
 | Lane | Context budget | Answer budget |
 |---|---|---|
-| Flash FP4-Local | 228,000 | 32,000 |
+| Qwen3.8 Flash-Next FP4-Local | 228,000 | 32,000 |
 | Qwen3.8-27B in its 1M mode | 578,000 | 185,000 |
 | A lane opencode has no limits for | 205,000 | 32,000 |
 

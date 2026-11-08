@@ -71,7 +71,7 @@ The pin moved from 0.70 to 0.76 because the image changed: on the official relea
 
 The SGLang cookbook's 0.80 for the 27B on DGX Spark is not a contradiction. Its GB10 cells ran 48 configurations at ISL 8192 / OSL 1024 and concurrency 1, boot-and-serve only. It rejects 0.85 because 0.85 of 128 GB leaves about 8 GB for the OS, exactly DGX OS earlyoom's SIGTERM threshold, and 15 of 48 cells were killed there. For one stream on a dedicated box, the cookbook's 0.80 is the better-evidenced pin. The installer optimizes for several clients at once.
 
-Other lanes carry their own measured values: the flash lane runs 0.85 under a 110g cap, the value of the SGLang cookbook's single-Spark Flash-Next cells, and the vLLM lanes set `--gpu-memory-utilization` (Kolibri 0.80 or 0.55, Bolt 0.70, Super VL 0.75, Flash FP4-Local 0.80).
+Other lanes carry their own measured values: the flash lane runs 0.85 under a 110g cap, the value of the SGLang cookbook's single-Spark Flash-Next cells, and the vLLM lanes set `--gpu-memory-utilization` (Kolibri 0.80 or 0.55, Bolt 0.70, Super VL 0.75, Qwen3.8 Flash-Next FP4-Local 0.80).
 
 ## Why does a DGX Spark freeze after an engine crash or restart?
 
@@ -100,7 +100,7 @@ An engine that earlyoom killed shows in `journalctl -u earlyoom` (exit -15, no t
 
 ## Can a model's boot dip memory even at a safe setting?
 
-Yes, and the Flash FP4-Local lane showed it. In each of its twelve boots on 2026-10-19 and 20, `MemAvailable` fell to between 0.5 and 3.5 GiB, and at the last one it went from 37 to 1.05 GiB in 8 seconds. PyTorch's allocator cache grew while the weights were prepared, and on a GB10 that cache is the machine's memory. The unit now sets the allocator a memory ceiling and a garbage-collection threshold. With it, two boots bottomed out at 19.1 and 18.7 GiB, and in four later boots, read every 0.2 or 0.5 s, it stayed at 11.7 GiB or more: the setting ends the dip.
+Yes, and the Qwen3.8 Flash-Next FP4-Local lane showed it. In each of its twelve boots on 2026-10-19 and 20, `MemAvailable` fell to between 0.5 and 3.5 GiB, and at the last one it went from 37 to 1.05 GiB in 8 seconds. PyTorch's allocator cache grew while the weights were prepared, and on a GB10 that cache is the machine's memory. The unit now sets the allocator a memory ceiling and a garbage-collection threshold. With it, two boots bottomed out at 19.1 and 18.7 GiB, and in four later boots, read every 0.2 or 0.5 s, it stayed at 11.7 GiB or more: the setting ends the dip.
 
 ## What about a 64 GB DGX Spark?
 
