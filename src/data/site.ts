@@ -11,7 +11,7 @@ export const SITE = {
     '(ASUS, Dell, HP, Lenovo, MSI, GIGABYTE, Acer), into a private AI server in one command: measured ' +
     'model lanes, OpenAI and Anthropic APIs, and a local cockpit.',
   privacy: 'No prompt, image or video leaves the box.',
-  version: 'v1.45.2',
+  version: 'v1.45.3',
   versionDate: '2026-11-09',
   firstRelease: '2026-08-15',
   updated: '2026-11-09',
