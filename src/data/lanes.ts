@@ -50,7 +50,7 @@ export const lanes: Lane[] = [
   {
     id: 'flash-local', slug: 'flash-fp4-local', name: 'Qwen3.8 Flash-Next FP4-Local', maker: 'NVIDIA', logo: '/img/logos/nvidia.svg', hue: '#22d3ee',
     kind: 'The FP4 build of the flash model',
-    about: "NVIDIA's FP4 build of the Flash-Next, on vLLM: the flash lane's quality in about half its disk, with twice its KV cache.",
+    about: "NVIDIA's FP4 build of the Flash-Next, on vLLM: the flash lane's quality in about half its disk, with twice its KV cache, and a window of a million tokens as an option.",
     value: '55.4', unit: 'tok/s', what: 'greedy median, at its default effort',
     facts: ['106.6 tok/s in all at 8 streams, at the lean effort', 'GSM8K 97.64% on 1,314 problems', 'About half the disk of the flash lane'],
     build: 'FP4-Local (NVIDIA), on vLLM b12x build 8244d1c',
