@@ -11,10 +11,10 @@ export const SITE = {
     '(ASUS, Dell, HP, Lenovo, MSI, GIGABYTE, Acer), into a private AI server in one command: measured ' +
     'model lanes, OpenAI and Anthropic APIs, and a local cockpit.',
   privacy: 'No prompt, image or video leaves the box.',
-  version: 'v1.40.2',
-  versionDate: '2026-10-24',
+  version: 'v1.45.0',
+  versionDate: '2026-11-09',
   firstRelease: '2026-08-15',
-  updated: '2026-10-26',
+  updated: '2026-11-09',
   forum: 'https://forums.developer.nvidia.com/t/380257',
   discussions: 'https://github.com/hasso5703/alzeo/discussions',
   releases: 'https://github.com/hasso5703/alzeo/releases',
