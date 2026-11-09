@@ -120,8 +120,10 @@ const jsonld = [
 
       <h2>Two 64 GB boxes</h2>
       <p>
-        NVIDIA rates two linked 64 GB units for models of up to 200B parameters. This project serves one box today. A
-        two-box mode is being designed with an owner of a linked pair, in <a href={SITE.discussions + '/45'}>discussion #45</a>.
+        NVIDIA rates two linked 64 GB units for models of up to 200B parameters. Since v1.42.0, two boxes that each run
+        {SITE.name} answer behind one address, each request going to the box that serves the model it names
+        (<a href={gh('docs/pair.md')}>docs/pair.md</a>). Splitting one model across both boxes is a later stage of{' '}
+        <a href={SITE.discussions + '/45'}>discussion #45</a>.
       </p>
 
       <h2>Install it</h2>

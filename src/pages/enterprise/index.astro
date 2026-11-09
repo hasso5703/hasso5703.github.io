@@ -1,0 +1,145 @@
+---
+import Base from '../../layouts/Base.astro';
+import Faq from '../../components/Faq.astro';
+import { SITE, gh } from '../../data/site';
+
+const path = '/enterprise/';
+const title = 'Alzeo for organizations: private AI on your own hardware';
+const description =
+  'Strong open models on a DGX Spark inside your network: no prompt leaves the box. Remote pilot, a day on site ' +
+  "and monthly support from the project's author.";
+const published = '2026-11-10';
+const mail = 'contact@alzeo.ai';
+
+const faq = [
+  {
+    q: 'Is Alzeo free for a company?',
+    a: 'Yes. Alzeo is open source under the MIT license and a company can install and use it as anyone can. What is paid is the work around it: installing it for you, a day on site, and support.',
+  },
+  {
+    q: 'Does anything leave the box?',
+    a: 'No prompt, image or video does. The box reaches GitHub, Hugging Face and container registries to install and update, which downloads software and model files and sends none of your data.',
+  },
+  {
+    q: 'Can we use the models commercially?',
+    a: "Each model keeps its maker's license: some allow commercial use and some restrict it. A pilot goes through them with you, and keeps on the box only what your use allows.",
+  },
+  {
+    q: 'What hardware do we need?',
+    a: 'One NVIDIA DGX Spark or another GB10 machine, with 128 GB for every model or 64 GB for the ones that fit it. You buy it from any reseller. Two boxes can answer behind one address. On other NVIDIA hardware the same engines run, and we set them up as a tailored engagement.',
+  },
+  {
+    q: 'Can several people share one box?',
+    a: 'Yes. The API serves several requests at once, the proxy can give each person or tool a key of its own, and the cockpit shows what the box is doing from a browser.',
+  },
+];
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Alzeo for organizations',
+    description,
+    serviceType: 'Installation and support of private, on-premises AI on NVIDIA DGX Spark',
+    provider: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    url: SITE.url + path,
+    areaServed: 'Europe',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: 'For organizations', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/">{SITE.name}</a> / For organizations</p>
+      <h1>Private AI on your own hardware</h1>
+      <p class="lead">For companies, public bodies and non-profits that want strong open models without sending a prompt to a cloud.</p>
+    </header>
+
+    <div class="prose">
+      <p class="answer">
+        Alzeo turns an NVIDIA DGX Spark into an AI server that stays inside your network: text, code, vision, images,
+        video and speech from measured open models, behind the OpenAI and Anthropic APIs your tools already speak.
+        The software is free and open source. If you want it <strong>installed, fitted to your tools and kept
+        running</strong>, the project's author does that with you, starting with a pilot.
+      </p>
+
+      <h2>What a box gives a team</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Need</th><th scope="col">On the box</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Coding agents</th><td>Claude Code, opencode, VS Code Copilot and Cursor against a local model, with a window of up to a million tokens (<a href="/guides/claude-code-local-model-dgx-spark/">how</a>)</td></tr>
+            <tr><th scope="row">Chat and documents</th><td>Any tool that speaks the OpenAI or Anthropic API, Open WebUI included (<a href="/guides/openai-compatible-api-dgx-spark/">the API</a>)</td></tr>
+            <tr><th scope="row">Images, video, speech</th><td>Made and transcribed on the box (<a href="/guides/image-and-video-generation-dgx-spark/">images and video</a>, <a href="/guides/speech-recognition-and-text-to-speech-dgx-spark/">speech</a>)</td></tr>
+            <tr><th scope="row">One place to run it</th><td>A cockpit in the browser: what serves, what it holds in memory, a model loaded with one button</td></tr>
+            <tr><th scope="row">More than one box</th><td>Two boxes answer behind one address, each request going to the box that serves the model it names</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <dl class="receipt">
+        <dt>Every model, measured</dt><dd><a href="/models/">the models page</a>, with the method of each number in <a href={gh('BENCHMARKS.md')}>BENCHMARKS.md</a></dd>
+      </dl>
+
+      <h2>Why it suits a team with rules to follow</h2>
+      <ul>
+        <li><strong>Your data stays where it is.</strong> {SITE.privacy} The engine listens on the box itself, and clients reach it through a proxy that asks for a key.</li>
+        <li><strong>You can read all of it.</strong> MIT-licensed source, every image pinned by its digest and every model by its revision, so the box you audit is the box that runs.</li>
+        <li><strong>Each release is proved before it is tagged.</strong> A full test run, then real clients against a real box, with what was measured written in the <a href={gh('CHANGELOG.md')}>changelog</a>.</li>
+        <li><strong>Security is written down.</strong> What listens where, what was found and what was fixed: <a href={gh('SECURITY.md')}>SECURITY.md</a>.</li>
+      </ul>
+      <p>
+        Keeping prompts on your own hardware is the simple part of the GDPR, the EU AI Act and DORA questions an AI
+        project raises. The rest is paperwork we prepare with you during a pilot: which models your use allows, what is
+        logged, who has a key.
+      </p>
+
+      <h2>Three ways to work together</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Offer</th><th scope="col">What it is</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Remote pilot</th><td>We install and tune Alzeo on your box, connect the tools your team uses, and walk your team through it in a two-hour session.</td></tr>
+            <tr><th scope="row">A day on site</th><td>Installation, placement in your network, and a hands-on workshop with your developers and your IT team.</td></tr>
+            <tr><th scope="row">Support</th><td>By the month, per box: a private channel, updates done with you, and an answer when something does not behave.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        This is a pilot program: the first organizations work directly with the author, in English or in French, and
+        each offer is quoted for your case.
+      </p>
+
+      <h2>Other hardware than a DGX Spark?</h2>
+      <p>
+        {SITE.name}'s one-command installer is built and measured for GB10 machines. If your organization runs other NVIDIA
+        hardware, a workstation or a server with RTX or data-center GPUs, the same open engines and the same models run
+        there. We set them up for you and measure them on your machine, as a tailored engagement: tell us what you have.
+      </p>
+
+      <h2>Start a conversation</h2>
+      <p>
+        Write to <a href={'mailto:' + mail}>{mail}</a> with three things: the hardware you have or plan to buy, what you
+        want the box to do, and the rules you work under. You get an answer and, if it fits, a 30-minute call.
+      </p>
+    </div>
+
+    <section class="section" aria-labelledby="faq-h" style="padding-top:72px">
+      <div class="section-head"><h2 id="faq-h">Questions from organizations</h2></div>
+      <Faq items={faq} />
+      <p class="updated" style="margin-top:28px">Published {published}. Last checked {SITE.updated} against {SITE.name} {SITE.version}.</p>
+    </section>
+  </div>
+</Base>

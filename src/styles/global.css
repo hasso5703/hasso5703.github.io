@@ -127,6 +127,7 @@ p { margin: 0; max-width: var(--measure); }
 .nav { display: flex; gap: 22px; margin-left: auto; align-items: center; }
 .head-tools { display: flex; gap: 22px; align-items: center; }
 .nav a, .head-tools a { color: var(--ink-2); text-decoration: none; font-size: 15px; font-weight: 520; }
+.nav a { white-space: nowrap; }
 .nav a:hover, .nav a[aria-current='page'], .head-tools a:hover { color: var(--ink); }
 .theme-toggle {
   border: 1px solid var(--rule); background: transparent; color: var(--ink-2); border-radius: 999px;
@@ -152,6 +153,7 @@ p { margin: 0; max-width: var(--measure); }
   .head-tools { margin-left: auto; }
   .nav { order: 3; flex-basis: 100%; margin-left: 0; justify-content: space-between; }
   .nav .hide-s { display: inline; }
+  .nav .hide-xs { display: none; }   /* a fifth link does not fit the phone's row: it is in the footer */
   .nav a { padding: 10px 0 12px; }
 }
 
