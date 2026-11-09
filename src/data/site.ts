@@ -3,7 +3,7 @@
 export const SITE = {
   name: 'Alzeo',
   formerName: 'dgx-spark-qwen38',   // its name until 2026-11-01: people still search for it
-  url: 'https://hasso5703.github.io',
+  url: 'https://alzeo.ai',
   repo: 'https://github.com/hasso5703/alzeo',
   install: 'curl -fsSL https://get.alzeo.ai | bash',
   sentence:

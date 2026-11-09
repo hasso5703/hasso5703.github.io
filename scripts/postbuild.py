@@ -22,8 +22,8 @@ from pathlib import Path
 
 DIST = Path(sys.argv[1] if len(sys.argv) > 1 else 'dist')
 OUT = Path('postbuild-out')
-SITE = 'https://hasso5703.github.io'
-HOST = 'hasso5703.github.io'
+SITE = 'https://alzeo.ai'
+HOST = 'alzeo.ai'
 LIVE = os.environ.get('LIVE_BASE', SITE).rstrip('/')
 TODAY = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
 NS = '{http://www.sitemaps.org/schemas/sitemap/0.9}'
