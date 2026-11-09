@@ -289,7 +289,7 @@ def page(path):
 
 def fetch(url):
     try:
-        request = urllib.request.Request(url, headers={'User-Agent': 'dgx-spark-qwen38 site build'})
+        request = urllib.request.Request(url, headers={'User-Agent': 'alzeo.ai site build'})
         with urllib.request.urlopen(request, timeout=20) as r:
             return r.read().decode('utf-8')
     except Exception as e:  # noqa: BLE001: no published file is a normal first build
@@ -338,13 +338,13 @@ def main():
 
     sentence = next((l[2:] for l in (DIST / 'llms.txt').read_text(encoding='utf-8').splitlines() if l.startswith('> ')), '')
     head = [
-        '# dgx-spark-qwen38: every page in full',
+        '# Alzeo: every page in full',
         '',
         f'> {sentence}',
         '',
         f'The text of every page of {SITE}/ in Markdown, in one file for AI agents and answer engines, with the date '
         f'each page last changed. One line per page: {SITE}/llms.txt. The source of every number about the project: '
-        'https://github.com/hasso5703/dgx-spark-qwen38.',
+        'https://github.com/hasso5703/alzeo.',
     ]
     sections = [f'URL: {u}\nUpdated: {updated[u]}\n\n{found[u][1]}' for u in order]
     (DIST / 'llms-full.txt').write_text('\n'.join(head) + '\n\n---\n\n' + '\n\n---\n\n'.join(sections) + '\n', encoding='utf-8')
