@@ -1,0 +1,339 @@
+---
+// The home page in French: the same sections as src/pages/index.astro, in the same order. In the text below, a
+// French space before : ; ! ? and inside a number or before its unit is &nbsp; (U+00A0).
+import Base from '../../layouts/Base.astro';
+import Command from '../../components/Command.astro';
+import LanePool from '../../components/LanePool.astro';
+import Faq from '../../components/Faq.astro';
+import { SITE, gh } from '../../data/site';
+import { siteText } from '../../data/site.fr';
+import { getLanes } from '../../data/lanes.fr';
+import { getMachines } from '../../data/machines.fr';
+import { getGuides } from '../../data/guides';
+
+const lang = 'fr';
+const text = siteText(lang);
+const lanes = getLanes(lang);
+const machines = getMachines(lang);
+const guides = getGuides(lang);
+
+const title = "Alzeo : une seule commande, un serveur d'IA privé sur DGX Spark";
+const description =
+  'Installeur open source pour le DGX Spark et toutes les machines GB10 : Qwen3.8 27B entre 65,2 et 68,5 tok/s, un ' +
+  'contexte de 1M, huit autres modèles mesurés, les API OpenAI et Anthropic.';
+
+const faq = [
+  {
+    q: 'Quelque chose quitte-t-il la machine ?',
+    a: "Aucun prompt, aucune image, aucune vidéo ne quitte la machine. L'installeur télécharge les images de moteur et " +
+      'les poids de modèles épinglés, et le cockpit demande à GitHub si une version plus récente existe. Chaque requête ' +
+      'que vous envoyez reçoit sa réponse sur la machine elle-même.',
+  },
+  {
+    q: 'Sur quelles machines fonctionne-t-il ?',
+    a: "Il est conçu pour le NVIDIA DGX Spark et toutes les autres machines GB10 sous DGX OS d'origine : ASUS Ascent " +
+      'GX10, Dell Pro Precision with GB10 (lancé sous le nom Dell Pro Max), HP ZGX Nano G1n, Lenovo ThinkStation PGX, MSI ' +
+      'EdgeXpert, GIGABYTE AI TOP ATOM et Acer Veriton GN100. Il lit la quantité de mémoire de la machine, pas sa marque, ' +
+      'et il est mesuré sur un ASUS Ascent GX10.',
+  },
+  {
+    q: 'Fonctionne-t-il sur un DGX Spark de 64 Go ?',
+    a: 'Oui. Sur une machine de 64 Go, il installe ce qui tient : Nemotron 3.5 Bolt de NVIDIA sert à 110,8 tok/s ' +
+      '(médiane gloutonne) et Qwen3.8-27B est à un clic sur Load, à 67,2 tok/s, tous deux mesurés avec un budget de ' +
+      "64 Go sur la machine de référence. Une lane qui exige 128 Go est refusée avant qu'un seul octet soit téléchargé.",
+  },
+  {
+    q: "Puis-je l'utiliser avec Claude Code, opencode ou Open WebUI ?",
+    a: "Oui. La machine sert des API compatibles OpenAI et Anthropic. opencode est branché sur le modèle local dès " +
+      "l'installation, et la configuration de Claude Code, VS Code Copilot, Open WebUI et Cursor est décrite dans le guide " +
+      'des clients du dépôt.',
+  },
+  {
+    q: 'Comment le mettre à jour ?',
+    a: 'Relancez la même commande. Une mise à jour épingle les nouvelles images et les nouveaux poids de la même façon, ' +
+      "et la lane qui sert prouve qu'elle sert avant la fin de la mise à jour.",
+  },
+  {
+    q: 'Quelle est sa vitesse ?',
+    a: 'Qwen3.8 27B répond entre 65,2 et 68,5 tok/s (médiane gloutonne de ./bench.sh, deux passages le 2026-11-05) ' +
+      'et à 80,6 tok/s au total à 4 requêtes sur des prompts de 8 192 jetons, avec une fenêtre d\'un million de ' +
+      'jetons. Chaque lane a ses chiffres et sa méthode dans BENCHMARKS.md.',
+  },
+  { q: 'Est-il gratuit ?', a: 'Oui. Il est open source, sous licence MIT.' },
+  {
+    q: 'Est-il fait par NVIDIA ?',
+    a: "Non. C'est un projet open source indépendant. Il tourne sur NVIDIA DGX OS et sert les modèles avec des moteurs " +
+      'comme SGLang et vLLM.',
+  },
+];
+
+// The same graph as the English home page, in French, under ids of its own: the author is the same person.
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': SITE.url + '/fr/#website',
+    name: SITE.name,
+    url: SITE.url + '/fr/',
+    inLanguage: 'fr',
+    description: text.sentence,
+    about: { '@id': SITE.url + '/fr/#software' },
+    publisher: { '@id': SITE.url + '/#author' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': ['SoftwareApplication', 'SoftwareSourceCode'],
+    '@id': SITE.url + '/fr/#software',
+    name: SITE.name,
+    alternateName: SITE.formerName,
+    description: text.sentence,
+    url: SITE.url + '/fr/',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'NVIDIA DGX OS sur GB10 (DGX Spark et machines partenaires)',
+    softwareVersion: SITE.version,
+    datePublished: SITE.firstRelease,
+    dateModified: SITE.versionDate,
+    license: 'https://opensource.org/licenses/MIT',
+    codeRepository: SITE.repo,
+    sameAs: [SITE.repo],
+    discussionUrl: SITE.discussions,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    author: { '@type': 'Person', '@id': SITE.url + '/#author', name: SITE.author.name, url: SITE.author.url, sameAs: [SITE.author.url] },
+    installUrl: SITE.repo + '#quickstart',
+    downloadUrl: SITE.releases,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+
+const clients = ['Claude Code', 'opencode', 'Hermes Agent', 'Open WebUI', 'Cursor', 'VS Code Copilot', 'LiteLLM', 'OpenAI SDK', 'Anthropic SDK'];
+---
+<Base title={title} description={description} path="/fr/" jsonld={jsonld} lang={lang}>
+  <section class="stage">
+    <div class="wrap hero">
+      <div>
+        <h1>Une seule commande fait d'un DGX Spark un serveur d'IA privé</h1>
+        <p class="lead">{text.sentence}</p>
+        <p class="privacy">{text.privacy}</p>
+        <Command lang={lang} />
+        <p class="read-first">
+          Vous préférez le lire d'abord&nbsp;? Clonez le dépôt et lancez <code>./install.sh</code>&nbsp;: c'est tout ce
+          que fait la commande en une ligne.
+        </p>
+        <p class="read-first">
+          Alzeo s'appelait {SITE.formerName} jusqu'au 2026-11-01. Une machine installée avant se met à jour comme elle
+          l'a toujours fait.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={SITE.repo}>Ouvrir le dépôt sur GitHub</a>
+          <a class="btn btn-ghost" href="#lanes">Voir les neuf lanes</a>
+        </div>
+      </div>
+      <figure class="phone" data-tour>
+        <video autoplay muted loop playsinline preload="metadata" poster="/media/tour-poster.webp" width="540" height="960" aria-label="Le cockpit pilote la machine depuis un ordinateur portable et un téléphone">
+          <source src="/media/tour-loop.mp4" type="video/mp4" />
+        </video>
+        <button class="btn play" type="button" data-play>Regarder la visite de 49 secondes, avec le son</button>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="lanes" aria-labelledby="lanes-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="lanes-h">Neuf lanes, une machine, une à la fois</h2>
+        <p>
+          Une recette démarre un modèle. Ce dépôt installe neuf lanes, chacune un modèle prêt à servir, épinglées et
+          mesurées, et les fait se relayer dans le même pool de 128&nbsp;Go&nbsp;: chargez-en une depuis le cockpit, elle
+          sert pendant que les autres attendent sur disque.
+        </p>
+      </div>
+      <LanePool lang={lang} />
+
+      <h3 style="margin-top:56px;margin-bottom:18px">Chaque lane, mesurée sur {text.referenceBox}</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Lane</th><th scope="col">Chiffre phare</th><th scope="col">Autres mesures</th><th scope="col">Méthode</th></tr></thead>
+          <tbody>
+            {lanes.map((l) => (
+              <tr>
+                <th scope="row"><span class="dot" style={`background:${l.hue}`}></span><a href={`/fr/models/${l.slug}/`}>{l.name}</a><div class="muted" style="font-weight:400;font-size:14px">{l.build}</div></th>
+                <td class="n">{l.value}{' '}{l.unit}<div class="muted" style="font-weight:400;font-size:14px;white-space:normal">{l.what}</div></td>
+                <td>{l.facts.join('. ')}.</td>
+                <td><a href={l.receipt.href}>{l.receipt.source}</a></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:16px">
+        Aussi sur la machine&nbsp;: la voix sur le CPU, à côté de n'importe quelle lane (Qwen3-ASR comprend 30 langues,
+        Kokoro en parle sept), et un point de terminaison System One qui répond par des probabilités calibrées au lieu de
+        texte.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="why-h">
+    <div class="wrap">
+      <div class="trap">
+        <h3>Le piège de la mémoire unifiée du GB10</h3>
+        <p>
+          Sur un Spark, le plus dur vient après le premier modèle. Le décompte mémoire de SGLang ne voit pas 25 à 40&nbsp;Go
+          d'allocations transitoires dans le pool partagé, et un pool poussé à zéro fige la machine jusqu'à un redémarrage
+          électrique.{' '}
+          <a href={gh('docs/gb10-memory.md')}>Voir comment fonctionne le piège</a>.
+        </p>
+      </div>
+      <div class="section-head">
+        <h2 id="why-h">Ce qui permet à neuf lanes de vivre sur une seule machine</h2>
+      </div>
+      <div class="reasons">
+        <div>
+          <h3>Épinglées et prouvées</h3>
+          <p>Les images de moteur sont épinglées par leur empreinte et les checkpoints par leur révision. La lane qui sert prouve qu'elle sert avant la fin de l'installation, et une mise à jour, c'est la même commande.</p>
+        </div>
+        <div>
+          <h3>Un pool, des lanes qui se relaient</h3>
+          <p>Le cockpit montre ce qui occupe la mémoire et charge une lane d'un seul bouton, depuis un ordinateur portable ou un téléphone.</p>
+        </div>
+        <div>
+          <h3>Des clients branchés ou documentés</h3>
+          <p>Des API compatibles OpenAI et Anthropic, opencode branché sur le modèle local, Claude Code par <code>claude-local</code>, et VS Code Copilot, Open WebUI et Cursor dans <a href={gh('docs/clients.md')}>le guide des clients</a>.</p>
+        </div>
+        <div>
+          <h3>Mesuré, pas annoncé</h3>
+          <p>GSM8K 99,2&nbsp;% sur la 27B (250 questions) et 97,41&nbsp;% sur la lane flash, un score d'appel d'outils de 91/100 sur tool-eval-bench, chaque chiffre avec sa méthode dans <a href={gh('BENCHMARKS.md')}>BENCHMARKS.md</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tools-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="tools-h">Fonctionne avec les outils que vous utilisez déjà</h2>
+        <p>Pointez votre agent ou votre application sur la machine au lieu d'une API du cloud. Les mêmes appels, votre matériel.</p>
+      </div>
+      <ul class="clients">{clients.map((c) => <li>{c}</li>)}</ul>
+      <div class="endpoints">
+        <div class="endpoint"><span class="muted">OpenAI</span><code>http://your-spark:30001/v1</code></div>
+        <div class="endpoint"><span class="muted">Anthropic</span><code>http://your-spark:30001</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="machines-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="machines-h">Conçu pour toutes les machines GB10</h2>
+        <p>Même puce, même DGX OS, même installeur. Il lit la quantité de mémoire de la machine, pas la marque inscrite dessus.</p>
+      </div>
+      <ul class="machines">
+        {machines.map((m) => (
+          <li>
+            <a href={`/fr/machines/${m.slug}/`}>
+              <span class="m-maker">{m.maker}</span>
+              <span class="m-name">{m.name}</span>
+              <span class="tags">{m.memory.map((g) => <span class:list={['tag', g === '64' && 't64']}>{g}{' '}Go</span>)}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="callout">
+        <p><strong>Vous avez acheté un Spark de 64&nbsp;Go&nbsp;?</strong> Il installe ce qui tient et sert Nemotron 3.5 Bolt de NVIDIA à 110,8&nbsp;tok/s, mesuré avec un budget de 64&nbsp;Go, avec Qwen3.8-27B à un clic sur Load.</p>
+        <a class="btn" href="/fr/dgx-spark-64gb/">Voir ce qui tient sur 64&nbsp;Go</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="cockpit-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="cockpit-h">Pilotez-la depuis un ordinateur portable ou un téléphone</h2>
+        <p>Le cockpit est installé par défaut. Il montre ce qui occupe la mémoire, charge une lane d'un seul bouton et fait tourner un agent de code dans le navigateur.</p>
+      </div>
+      <div class="shots">
+        <figure>
+          <img src="/img/cockpit-now.webp" alt="La vue Now du cockpit&nbsp;: un pool de mémoire unifiée et ce qui l'occupe, et les lanes dans leur rack avec les logos de leurs fabricants, celle qui sert bordée de vert" loading="lazy" width="1600" height="1000" />
+          <figcaption>La vue Now&nbsp;: le pool, ce qui l'occupe, et le rack des lanes.</figcaption>
+        </figure>
+        <div class="side">
+          <figure>
+            <img src="/img/cockpit-phone.webp" alt="Le cockpit sur un téléphone" loading="lazy" width="786" height="1704" />
+            <figcaption>Le même cockpit sur un téléphone.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="proof-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="proof-h">Prouvé avant chaque sortie</h2>
+      </div>
+      <div class="proof">
+        <div><div class="big">114</div><p>versions depuis le {SITE.firstRelease}, chacune avec ses notes</p></div>
+        <div><div class="big">55</div><p>étapes de CI que chaque version passe sur GitHub</p></div>
+        <div><div class="big">56 sur 56</div><p>vérifications avec de vrais clients pour {SITE.version}&nbsp;: 8 clients sur 7 lanes</p></div>
+        <div><div class="big">21&nbsp;967</div><p>vues du fil du projet sur le forum de NVIDIA</p></div>
+      </div>
+      <ul class="cited">
+        <li><a href="https://kevinwelter.com/en/blog/qwen-3-8-lokal">Le récit de Kevin Welter</a>, qui fait tourner Qwen3.8 sur un DGX Spark, suit cette recette.</li>
+        <li><a href="https://github.com/MiaAI-Lab/Qwen3.8-27B-SGLang-DGX-Spark">MiaAI-Lab</a> s'appuie sur sa configuration publiée.</li>
+        <li><a href="https://github.com/Soulmate-Halo/heterogeneous-gpu-pd-lab/blob/main/results/dgx-spark-community-control.md">heterogeneous-gpu-pd-lab</a> prend ses mesures comme référence pour le DGX Spark.</li>
+        <li>Il figure dans <a href="https://github.com/bidual/awesome-dgx-spark">awesome-dgx-spark</a>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="guides-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="guides-h">Des réponses pour les possesseurs de Spark</h2>
+        <p>Chaque guide répond à une question que posent les possesseurs, avec la source de chaque chiffre.</p>
+      </div>
+      <ul class="guide-list">
+        {guides.map((g) => (
+          <li><a href={`/fr/guides/${g.slug}/`}><span class="g-title">{g.h1}</span><span class="muted">{g.description}</span></a></li>
+        ))}
+      </ul>
+      <p style="margin-top:22px"><a href="/fr/guides/">Tous les guides</a> et <a href="/fr/models/">les neuf modèles</a>.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="faq-h">Les questions des possesseurs</h2></div>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <section class="end">
+    <div class="wrap">
+      <h2>Votre propre labo d'IA, dans une seule machine.</h2>
+      <Command lang={lang} />
+      <div class="hero-actions"><a class="btn btn-primary" href={SITE.repo}>Ouvrir le dépôt sur GitHub</a></div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const fig = document.querySelector<HTMLElement>('[data-tour]');
+  const vid = fig?.querySelector('video');
+  if (vid && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { vid.removeAttribute('autoplay'); vid.pause(); }
+  const btn = fig?.querySelector<HTMLButtonElement>('[data-play]');
+  btn?.addEventListener('click', () => {
+    if (!vid) return;
+    vid.loop = false;
+    vid.muted = false;
+    vid.controls = true;
+    vid.src = '/media/tour-720.mp4';
+    vid.play().catch(() => {});
+    btn.remove();
+  });
+</script>
