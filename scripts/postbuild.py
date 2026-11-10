@@ -38,6 +38,14 @@ SKIP_TAGS = {'script', 'style', 'svg', 'button', 'figure', 'img', 'video', 'sour
 SKIP_CLASSES = {'crumbs', 'pool-ui', 'hero-actions', 'dot'}
 INLINE = {'a', 'span', 'strong', 'b', 'em', 'i', 'code', 'small', 'sup', 'sub', 'br', 'abbr', 'time', 'kbd', 'mark', 'q', 'u', 'label'}
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'}
+# The colon this script writes between a label and its text, in the language of the page being converted (its
+# <html lang>, set by page()): French puts U+00A0 before it.
+COLONS = {'en': ': ', 'fr': '\u00a0: '}
+LANG = 'en'
+
+
+def colon():
+    return COLONS.get(LANG, COLONS['en'])
 
 
 class Node:
@@ -94,7 +102,8 @@ def skipped(node):
 
 
 def clean(text):
-    return re.sub(r'\s+', ' ', text).strip()
+    # Only ASCII whitespace collapses: Python's \s also matches U+00A0, which French keeps before : ; ! ? and units.
+    return re.sub(r'[ \t\n\r\f\v]+', ' ', text).strip(' \t\n\r\f\v')
 
 
 def absolute(href):
@@ -158,7 +167,7 @@ def fields_link(a):
     name_at = next((i for i, (cls, _) in enumerate(fields) if cls & {'m-name', 'g-title'}), 0)
     rest = [t for i, (_, t) in enumerate(fields) if i != name_at]
     link = f'[{fields[name_at][1]}]({absolute(a.attrs.get("href", ""))})'
-    return link + (': ' + ', '.join(rest) if rest else '')
+    return link + (colon() + ', '.join(rest) if rest else '')
 
 
 def list_lines(lst, depth=0):
@@ -243,7 +252,7 @@ def blocks(node):
                 key = clean(inline(c))
             else:
                 value = clean(inline(c))
-                lines.append(f'- {key}: {value}' if key else f'- {value}')
+                lines.append(f'- {key}{colon()}{value}' if key else f'- {value}')
         return ['\n'.join(lines)] if lines else []
     if tag == 'details':
         out = []
@@ -278,7 +287,10 @@ def container(node):
 
 
 def page(path):
+    global LANG
     source = path.read_text(encoding='utf-8')
+    found_lang = re.search(r'<html lang="([a-z]+)', source)
+    LANG = found_lang.group(1) if found_lang else 'en'
     title = html.unescape(re.search(r'<title>(.*?)</title>', source, re.S).group(1)).strip()
     url = re.search(r'<link rel="canonical" href="([^"]+)"', source).group(1)
     tree = Tree()
