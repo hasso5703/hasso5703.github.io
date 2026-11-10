@@ -1,0 +1,158 @@
+---
+// The page for organizations in French: the same sections as src/pages/enterprise/index.astro, in the same order. In
+// the text below, a French space before : ; ! ? and inside a number or before its unit is &nbsp; (U+00A0).
+import Base from '../../../layouts/Base.astro';
+import Faq from '../../../components/Faq.astro';
+import { SITE, gh } from '../../../data/site';
+import { siteText } from '../../../data/site.fr';
+
+const lang = 'fr';
+const path = '/fr/enterprise/';
+const title = 'Alzeo pour les organisations : une IA privée sur votre propre matériel';
+const description =
+  'Des modèles ouverts performants sur un DGX Spark dans votre réseau : aucun prompt ne quitte la machine. Pilote à ' +
+  "distance, journée sur site et support mensuel par l'auteur du projet.";
+const published = '2026-11-10';
+const mail = 'contact@alzeo.ai';
+
+const faq = [
+  {
+    q: 'Alzeo est-il gratuit pour une entreprise ?',
+    a: "Oui. Alzeo est open source, sous licence MIT, et une entreprise peut l'installer et l'utiliser comme n'importe qui. " +
+      "Ce qui est payant, c'est le travail autour : l'installer pour vous, une journée sur site, et le support.",
+  },
+  {
+    q: 'Quelque chose quitte-t-il la machine ?',
+    a: 'Aucun prompt, aucune image, aucune vidéo. La machine contacte GitHub, Hugging Face et des registres de conteneurs ' +
+      "pour s'installer et se mettre à jour : cela télécharge des logiciels et des fichiers de modèles, et n'envoie " +
+      'aucune de vos données.',
+  },
+  {
+    q: 'Pouvons-nous utiliser les modèles à des fins commerciales ?',
+    a: "Chaque modèle garde la licence de son éditeur : certaines autorisent l'usage commercial, d'autres le " +
+      'restreignent. Un pilote les passe en revue avec vous, et ne garde sur la machine que ce que votre usage permet.',
+  },
+  {
+    q: 'De quel matériel avons-nous besoin ?',
+    a: 'Un NVIDIA DGX Spark ou une autre machine GB10, avec 128 Go pour tous les modèles ou 64 Go pour ceux qui y ' +
+      "tiennent. Vous l'achetez chez n'importe quel revendeur. Deux machines peuvent répondre derrière une seule adresse. " +
+      "Sur un autre matériel NVIDIA, les mêmes moteurs tournent, et nous les installons dans le cadre d'une mission sur mesure.",
+  },
+  {
+    q: 'Plusieurs personnes peuvent-elles partager une machine ?',
+    a: "Oui. L'API sert plusieurs requêtes à la fois, le proxy peut donner à chaque personne ou à chaque outil sa propre " +
+      'clé, et le cockpit montre ce que fait la machine depuis un navigateur.',
+  },
+];
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Alzeo pour les organisations',
+    description,
+    serviceType: "Installation et support d'une IA privée, sur site, sur NVIDIA DGX Spark",
+    provider: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    url: SITE.url + path,
+    areaServed: 'Europe',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/fr/' },
+      { '@type': 'ListItem', position: 2, name: 'Pour les organisations', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article" lang={lang}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/fr/">{SITE.name}</a> / Pour les organisations</p>
+      <h1>Une IA privée sur votre propre matériel</h1>
+      <p class="lead">Pour les entreprises, les organismes publics et les associations qui veulent des modèles ouverts performants sans envoyer un seul prompt à un cloud.</p>
+    </header>
+
+    <div class="prose">
+      <p class="answer">
+        Alzeo fait d'un NVIDIA DGX Spark un serveur d'IA qui reste dans votre réseau&nbsp;: texte, code, vision, images,
+        vidéo et voix par des modèles ouverts mesurés, derrière les API OpenAI et Anthropic que vos outils parlent déjà.
+        Le logiciel est gratuit et open source. Si vous le voulez <strong>installé, adapté à vos outils et maintenu en
+        marche</strong>, l'auteur du projet le fait avec vous, en commençant par un pilote.
+      </p>
+
+      <h2>Ce qu'une machine apporte à une équipe</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Besoin</th><th scope="col">Sur la machine</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Agents de code</th><td>Claude Code, opencode, VS Code Copilot et Cursor sur un modèle local, avec une fenêtre allant jusqu'à un million de jetons (<a href="/fr/guides/claude-code-local-model-dgx-spark/">comment</a>)</td></tr>
+            <tr><th scope="row">Discussion et documents</th><td>Tout outil qui parle l'API OpenAI ou Anthropic, Open WebUI compris (<a href="/fr/guides/openai-compatible-api-dgx-spark/">l'API</a>)</td></tr>
+            <tr><th scope="row">Images, vidéo, voix</th><td>Produites et transcrites sur la machine (<a href="/fr/guides/image-and-video-generation-dgx-spark/">images et vidéo</a>, <a href="/fr/guides/speech-recognition-and-text-to-speech-dgx-spark/">voix</a>)</td></tr>
+            <tr><th scope="row">Un seul endroit pour tout piloter</th><td>Un cockpit dans le navigateur&nbsp;: ce qui sert, ce que cela occupe en mémoire, un modèle chargé d'un seul bouton</td></tr>
+            <tr><th scope="row">Plus d'une machine</th><td>Deux machines répondent derrière une seule adresse, chaque requête allant à la machine qui sert le modèle qu'elle nomme</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <dl class="receipt">
+        <dt>Chaque modèle, mesuré</dt><dd><a href="/fr/models/">la page des modèles</a>, avec la méthode de chaque chiffre dans <a href={gh('BENCHMARKS.md')}>BENCHMARKS.md</a></dd>
+      </dl>
+
+      <h2>Pourquoi cela convient à une équipe qui a des règles à suivre</h2>
+      <ul>
+        <li><strong>Vos données restent où elles sont.</strong> {siteText(lang).privacy} Le moteur écoute sur la machine elle-même, et les clients l'atteignent par un proxy qui demande une clé.</li>
+        <li><strong>Vous pouvez tout lire.</strong> Un code source sous licence MIT, chaque image épinglée par son empreinte et chaque modèle par sa révision&nbsp;: la machine que vous auditez est celle qui tourne.</li>
+        <li><strong>Chaque version est prouvée avant d'être étiquetée.</strong> Une série de tests complète, puis de vrais clients sur une vraie machine, avec ce qui a été mesuré écrit dans le <a href={gh('CHANGELOG.md')}>journal des modifications</a>.</li>
+        <li><strong>La sécurité est documentée.</strong> Ce qui écoute où, ce qui a été trouvé et ce qui a été corrigé&nbsp;: <a href={gh('SECURITY.md')}>SECURITY.md</a>.</li>
+      </ul>
+      <p>
+        Garder les prompts sur votre propre matériel est la partie simple des questions que soulève un projet d'IA au
+        regard du RGPD, de l'AI Act européen et de DORA. Le reste, ce sont des documents que nous préparons avec vous
+        pendant un pilote&nbsp;: quels modèles votre usage autorise, ce qui est journalisé, qui a une clé.
+      </p>
+
+      <h2>Trois façons de travailler ensemble</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Offre</th><th scope="col">Ce que c'est</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Pilote à distance</th><td>Nous installons et réglons Alzeo sur votre machine, nous y connectons les outils qu'utilise votre équipe, et nous la guidons pas à pas lors d'une séance de deux heures.</td></tr>
+            <tr><th scope="row">Une journée sur site</th><td>Installation, intégration dans votre réseau, et un atelier pratique avec vos développeurs et votre équipe informatique.</td></tr>
+            <tr><th scope="row">Support</th><td>Au mois, par machine&nbsp;: un canal privé, des mises à jour faites avec vous, et une réponse quand quelque chose ne se comporte pas comme prévu.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        C'est un programme pilote&nbsp;: les premières organisations travaillent directement avec l'auteur, en anglais ou en
+        français, et chaque offre fait l'objet d'un devis adapté à votre cas.
+      </p>
+
+      <h2>Un autre matériel qu'un DGX Spark&nbsp;?</h2>
+      <p>
+        L'installeur en une seule commande d'{SITE.name} est conçu et mesuré pour les machines GB10. Si votre organisation
+        utilise un autre matériel NVIDIA, une station de travail ou un serveur avec des GPU RTX ou de centre de données, les
+        mêmes moteurs ouverts et les mêmes modèles y tournent. Nous les installons pour vous et les mesurons sur votre
+        machine, dans le cadre d'une mission sur mesure&nbsp;: dites-nous ce que vous avez.
+      </p>
+
+      <h2>Prendre contact</h2>
+      <p>
+        Écrivez à <a href={'mailto:' + mail}>{mail}</a> en indiquant trois choses&nbsp;: le matériel que vous avez ou comptez
+        acheter, ce que vous voulez que la machine fasse, et les règles auxquelles vous êtes soumis. Vous recevez une réponse
+        et, si cela convient, un appel de 30&nbsp;minutes.
+      </p>
+    </div>
+
+    <section class="section" aria-labelledby="faq-h" style="padding-top:72px">
+      <div class="section-head"><h2 id="faq-h">Questions des organisations</h2></div>
+      <Faq items={faq} />
+      <p class="updated" style="margin-top:28px">Publié le {published}. Dernière vérification le {SITE.updated}, sur {SITE.name} {SITE.version}.</p>
+    </section>
+  </div>
+</Base>
