@@ -21,6 +21,7 @@ export function GET() {
     '',
     '## Pages',
     `- [Every page in full, in Markdown](${SITE.url}/llms-full.txt): the text of all the pages in one file, with the date each one last changed`,
+    `- [The site in French](${SITE.url}/fr/): every page also exists in French under /fr/, with its full text at ${SITE.url}/fr/llms-full.txt`,
     `- [Home](${SITE.url}/): what it is, the nine lanes, the clients, the machines`,
     `- [What to run on a 64 GB DGX Spark](${SITE.url}/dgx-spark-64gb/): Nemotron 3.5 Bolt at 110.8 tok/s and Qwen3.8-27B at 67.2 tok/s at a 64 GB budget, what needs 128 GB`,
     `- [Nine models, measured on a DGX Spark](${SITE.url}/models/)`,
