@@ -1,0 +1,9 @@
+---
+import MachinePage from '../../../components/views/MachinePage.astro';
+import { machines } from '../../../data/machines';
+
+export function getStaticPaths() {
+  return machines.map((m) => ({ params: { slug: m.slug } }));
+}
+---
+<MachinePage slug={Astro.params.slug} lang="fr" />
