@@ -1,0 +1,153 @@
+---
+// The 64 GB page in French: the same sections as src/pages/dgx-spark-64gb/index.astro, in the same order. In the
+// text below, a French space before : ; ! ? and inside a number or before its unit is &nbsp; (U+00A0).
+import Base from '../../../layouts/Base.astro';
+import Command from '../../../components/Command.astro';
+import Faq from '../../../components/Faq.astro';
+import { SITE, gh } from '../../../data/site';
+import { siteText } from '../../../data/site.fr';
+
+const lang = 'fr';
+const path = '/fr/dgx-spark-64gb/';
+const title = 'Que faire tourner sur un DGX Spark de 64 Go : des modèles mesurés';
+const description =
+  'Sur un DGX Spark de 64 Go, Nemotron 3.5 Bolt répond à 110,8 tok/s et Qwen3.8-27B à 67,2 tok/s, mesurés avec ' +
+  'un budget de 64 Go. Ce qui tient, ce qui exige 128 Go.';
+const published = '2026-10-26';
+const nvidiaBlog = 'https://blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync/';
+const nvidiaPage = 'https://www.nvidia.com/en-us/products/workstations/dgx-spark/';
+
+const faq = [
+  {
+    q: 'Un DGX Spark de 64 Go peut-il faire tourner Qwen3.8-27B ?',
+    a: 'Oui, en NVFP4 sans la fenêtre de 1M : deux requêtes à la fois, 59 625 jetons de cache KV, donc un prompt de ' +
+      '54 855 jetons au plus, à 67,2 tok/s (médiane gloutonne). Chargez-le depuis le cockpit.',
+  },
+  {
+    q: 'Quel est le meilleur modèle pour un DGX Spark de 64 Go ?',
+    a: 'Pour la plupart des usages, Nemotron 3.5 Bolt de NVIDIA : il lit les images et la vidéo, répond à ' +
+      '110,8 tok/s (médiane gloutonne) et garde 667 874 jetons de cache KV, 2,55 fois sa fenêtre de 262 144 jetons.',
+  },
+  {
+    q: 'Un DGX Spark de 64 Go peut-il faire des images ou de la vidéo ?',
+    a: 'Pas avec cet installeur. Les lanes image et vidéo exigent un DGX Spark de 128 Go, et l\'installeur les refuse ' +
+      'sur une machine de 64 Go avant de télécharger quoi que ce soit.',
+  },
+  {
+    q: 'Est-ce que 64 Go suffisent pour Claude Code ou opencode ?',
+    a: 'Oui. Le pool de Bolt contient plusieurs fois la plus grande étape d\'agent mesurée sur le projet (43 863 ' +
+      'jetons). Sur la 27B, une étape aussi grande peut être refusée comme trop longue, et Claude Code et opencode ' +
+      'compactent puis continuent.',
+  },
+];
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: 'Que faire tourner sur un DGX Spark de 64 Go',
+    description,
+    datePublished: published,
+    dateModified: SITE.updated,
+    author: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    about: ['NVIDIA DGX Spark 64 Go', 'NVIDIA GB10', 'Nemotron 3.5 Bolt', 'Qwen3.8-27B'],
+    mainEntityOfPage: SITE.url + path,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/fr/' },
+      { '@type': 'ListItem', position: 2, name: 'DGX Spark de 64 Go', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article" lang={lang}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/fr/">{SITE.name}</a> / DGX Spark de 64&nbsp;Go</p>
+      <h1>Que faire tourner sur un DGX Spark de 64&nbsp;Go</h1>
+      <p class="lead">Mesuré sur la machine de référence du projet, avec la mémoire qu'une machine de 64&nbsp;Go donne à chaque moteur, le 2026-10-24.</p>
+    </header>
+
+    <div class="prose">
+      <p class="answer">
+        Servez <strong>Nemotron 3.5 Bolt</strong> de NVIDIA&nbsp;: il lit les images et la vidéo et répond à
+        <strong>110,8&nbsp;tok/s</strong> (médiane gloutonne), avec 667&nbsp;874 jetons de cache KV, 2,55 fois sa fenêtre de
+        262&nbsp;144 jetons. Gardez <strong>Qwen3.8-27B</strong> à un clic sur Load pour le texte et le code&nbsp;:
+        <strong>67,2&nbsp;tok/s</strong>, deux requêtes à la fois. Une seule commande installe exactement cela, et refuse ce
+        qui exige 128&nbsp;Go avant qu'un seul octet soit téléchargé.
+      </p>
+
+      <h2>Ce qui tient, mesuré</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Lane</th><th scope="col">Sur un DGX Spark de 64&nbsp;Go</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><span class="dot" style="background:#84cc16"></span>Nemotron 3.5 Bolt</th><td>La lane (un modèle prêt à servir) qu'il sert, avec sa propre part de mémoire&nbsp;: 667&nbsp;874 jetons de KV (2,55 fois sa fenêtre de 262&nbsp;144 jetons), <strong class="num">110,8&nbsp;tok/s</strong> en médiane gloutonne sur <code>./bench.sh</code>.</td></tr>
+            <tr><th scope="row"><span class="dot" style="background:#8c6cff"></span>Qwen3.8-27B en NVFP4</th><td>À un clic sur Load, dans une unité dimensionnée pour 64&nbsp;Go&nbsp;: deux requêtes à la fois, 59&nbsp;625 jetons de KV (un prompt de 54&nbsp;855 jetons au plus), <strong class="num">67,2&nbsp;tok/s</strong> en médiane gloutonne.</td></tr>
+            <tr><th scope="row">Voix</th><td>Comme sur toute machine, sur le CPU&nbsp;: Qwen3-ASR écoute, Kokoro parle.</td></tr>
+            <tr><th scope="row">Exige 128&nbsp;Go</th><td>La lane flash, la fenêtre de 1M de la 27B, les cibles FP8, les images, la vidéo, Kolibri-1, Nemotron 3.5 Super VL, Qwen3.8 Flash-Next FP4-Local et Ornith 1.5 122B sont refusés, car ils exigent un DGX Spark de 128&nbsp;Go.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <dl class="receipt">
+        <dt>Mesuré sur</dt><dd>{siteText(lang).referenceBox}, avec la mémoire qu'une machine de 64&nbsp;Go donne à chaque moteur, le 2026-10-24</dd>
+        <dt>Méthode</dt><dd>chaque réglage essayé figure dans le journal des modifications de la v1.40.0</dd>
+        <dt>Source</dt><dd><a href={gh('README.md#on-a-64-gb-dgx-spark')}>README, section On a 64 GB DGX Spark</a> et <a href={gh('CHANGELOG.md')}>CHANGELOG</a></dd>
+      </dl>
+
+      <h2>Comment l'installeur sait que la machine a 64&nbsp;Go</h2>
+      <p>
+        Il déduit la classe de la machine de sa mémoire&nbsp;: une machine de 128&nbsp;Go à partir de 110&nbsp;Gio, un DGX Spark
+        de 64&nbsp;Go à partir de 48&nbsp;Gio, et en dessous il s'arrête dès sa première étape et indique combien de Gio la
+        machine possède. Chaque refus arrive avant qu'un seul octet soit récupéré&nbsp;: dans l'installeur, dans l'installeur
+        de chaque lane, dans la bascule de modèle, et donc dans le Load du cockpit, où une lane qu'une machine de 64&nbsp;Go
+        ne peut pas contenir indique qu'elle exige un DGX Spark de 128&nbsp;Go. Le cockpit nomme la machine d'après son
+        firmware, par exemple «&nbsp;ASUS Ascent GX10, 64 GB&nbsp;».
+      </p>
+
+      <h2>Agents de code sur 64&nbsp;Go</h2>
+      <p>
+        Bolt convient mieux aux longues sessions d'agent sur 64&nbsp;Go&nbsp;: son pool contient plusieurs fois la plus grande
+        des 2&nbsp;156 étapes d'opencode mesurées sur le projet, 43&nbsp;863 jetons. Le pool de la 27B contient les tours d'un
+        agent mais peut refuser une étape aussi grande comme trop longue, et Claude Code et opencode compactent alors puis
+        continuent. L'installeur ajuste les limites d'opencode au pool avec lequel la 27B démarre.
+      </p>
+
+      <h2>Quelles machines existent en 64&nbsp;Go</h2>
+      <p>
+        La configuration de 64&nbsp;Go de NVIDIA a la même puce GB10 et la même bande passante mémoire de 273&nbsp;Go/s que
+        celle de 128&nbsp;Go, et NVIDIA l'annonce pour des modèles allant jusqu'à 100B paramètres
+        (<a href={nvidiaPage}>la page DGX Spark de NVIDIA</a>). Elle n'est vendue que par les partenaires de NVIDIA&nbsp;: à
+        partir du 23 octobre 2026, par Acer, ASUS, Dell, GIGABYTE, HP et MSI (<a href={nvidiaBlog}>l'annonce de NVIDIA</a>).
+        Voir <a href="/fr/machines/">toutes les machines GB10</a>.
+      </p>
+
+      <h2>Deux machines de 64&nbsp;Go</h2>
+      <p>
+        NVIDIA annonce deux unités de 64&nbsp;Go reliées pour des modèles allant jusqu'à 200B paramètres. Depuis la v1.42.0,
+        deux machines qui font chacune tourner {SITE.name} répondent derrière une seule adresse, chaque requête allant à la
+        machine qui sert le modèle qu'elle nomme (<a href={gh('docs/pair.md')}>docs/pair.md</a>). Répartir un seul modèle
+        sur les deux machines est une étape ultérieure de{' '}
+        <a href={SITE.discussions + '/45'}>la discussion #45</a>.
+      </p>
+
+      <h2>L'installer</h2>
+      <p>Sur une machine de 64&nbsp;Go, la première installation se termine sur Bolt. La même commande la met à jour ensuite.</p>
+    </div>
+    <Command lang={lang} />
+
+    <section class="section" aria-labelledby="faq-h" style="padding-top:72px">
+      <div class="section-head"><h2 id="faq-h">Questions sur le DGX Spark de 64&nbsp;Go</h2></div>
+      <Faq items={faq} />
+      <p class="updated" style="margin-top:28px">Publié le {published}. Dernière vérification le {SITE.updated}, sur {SITE.name} {SITE.version}.</p>
+    </section>
+  </div>
+</Base>
