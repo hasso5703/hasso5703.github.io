@@ -1,0 +1,46 @@
+---
+// The guides page, in English (/guides/) or in French (/fr/guides/): the guides of that language, in the same order.
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../data/site';
+import { getGuides } from '../../data/guides';
+import { ui, localePath, type Lang } from '../../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang].guides;
+const guides = getGuides(lang);
+const to = (p: string) => localePath(p, lang);
+const path = to('/guides/');
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: t.listName,
+    itemListElement: guides.map((g, i) => ({ '@type': 'ListItem', position: i + 1, name: g.h1, url: SITE.url + to(`/guides/${g.slug}/`) })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + to('/') },
+      { '@type': 'ListItem', position: 2, name: t.crumb, item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={t.title} description={t.description} path={path} jsonld={jsonld} lang={lang}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href={to('/')}>{SITE.name}</a> / {t.crumb}</p>
+      <h1>{t.h1}</h1>
+      <p class="lead">{t.lead}</p>
+    </header>
+    <ul class="guide-list">
+      {guides.map((g) => (
+        <li><a href={to(`/guides/${g.slug}/`)}><span class="g-title">{g.h1}</span><span class="muted">{g.description}</span></a></li>
+      ))}
+      <li><a href={to('/dgx-spark-64gb/')}><span class="g-title">{t.gb64Title}</span><span class="muted">{t.gb64Text}</span></a></li>
+    </ul>
+    <div style="height:96px"></div>
+  </div>
+</Base>
