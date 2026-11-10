@@ -1,0 +1,117 @@
+---
+// A model's page, in English (/models/<slug>/) or in French (/fr/models/<slug>/): one template over the lanes.
+import Base from '../../layouts/Base.astro';
+import Command from '../../components/Command.astro';
+import Faq from '../../components/Faq.astro';
+import { SITE } from '../../data/site';
+import { siteText } from '../../data/site.fr';
+import { getLanes, fitsOn64 } from '../../data/lanes.fr';
+import { ui, localePath, type Lang } from '../../i18n/ui';
+
+interface Props { slug: string; lang: Lang }
+const { slug, lang } = Astro.props;
+const lanes = getLanes(lang);
+const l = lanes.find((x) => x.slug === slug)!;
+const t = ui[lang].model;
+const r = ui[lang].receipt;
+const box = siteText(lang).referenceBox;
+const sp = lang === 'fr' ? '\xa0' : ' ';   // between a number and its unit
+const to = (p: string) => localePath(p, lang);
+const path = to(`/models/${l.slug}/`);
+const headline = `${l.value}${sp}${l.unit}`;
+const title = t.title(l.name, l.titleFact ?? t.measuredFact(headline));
+const description = t.description(l.name, headline, l.what, Boolean(l.local));
+const fits = fitsOn64(l.slug);
+const faq = [
+  { q: t.faq.run(l.name), a: t.faq.runAnswer(l.about, SITE.name) },
+  { q: t.faq.fast(l.name), a: t.faq.fastAnswer(headline, l.what, box, l.facts.join('. ')) },
+  { q: t.faq.fits(l.name), a: l.fits64 },
+];
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: t.headline(l.name),
+    description,
+    dateModified: SITE.updated,
+    author: { '@type': 'Person', name: SITE.author.name, url: SITE.author.url },
+    about: [l.name, l.maker, 'NVIDIA DGX Spark', 'NVIDIA GB10'],
+    mainEntityOfPage: SITE.url + path,
+    isBasedOn: l.receipt.href,
+  },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + to('/') },
+      { '@type': 'ListItem', position: 2, name: t.crumb, item: SITE.url + to('/models/') },
+      { '@type': 'ListItem', position: 3, name: l.name, item: SITE.url + path },
+    ],
+  },
+];
+const others = lanes.filter((o) => o.id !== l.id);
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article" lang={lang}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href={to('/')}>{SITE.name}</a> / <a href={to('/models/')}>{t.crumb}</a> / {l.name}</p>
+      <h1>{t.headline(l.name)}</h1>
+      <p class="lead">{t.lead(l.kind, l.maker, l.build[0].toUpperCase() + l.build.slice(1))}</p>
+    </header>
+    <div class="prose">
+      <p class="answer">{t.answer(l.about, box)}<strong class="num">{headline}</strong>, {l.what}.</p>
+
+      <h2>{t.measured}</h2>
+      <div class="lane-view" style={`--hue:${l.hue}`}>
+        <p class="metric" style="margin-top:0"><span class:list={['v', l.value.length > 7 && 'long']}>{l.value}</span><span class="u">{l.unit}</span></p>
+        <p class="metric-what">{l.what}</p>
+        <ul class="lane-facts">{l.facts.map((f) => <li>{f}</li>)}</ul>
+        <dl class="receipt">
+          <dt>{r.measuredOn}</dt><dd>{r.reference(box)}</dd>
+          <dt>{r.how}</dt><dd>{l.receipt.method}</dd>
+          <dt>{r.source}</dt><dd><a href={l.receipt.href}>{l.receipt.source}</a></dd>
+        </dl>
+      </div>
+
+      <h2>{t.load}</h2>
+      <p>{t.loadPick}<strong>{l.name}</strong>{t.loadPress}<strong>Load</strong>{t.loadRest(l.load.cockpit)}</p>
+      <pre class="code"><code>{l.load.prepare ? `./prepare-lane.sh ${l.load.prepare}   # the first time only, builds the lane\n` : ''}./switch-model.sh {l.load.target}   # switches the boot, then prints the commands to run</code></pre>
+      <p><code>switch-model.sh</code>{t.switchNote}</p>
+      {l.load.variants && <p>{t.variants}<code>{l.load.variants}</code>.</p>}
+
+      <h2>{t.on64}</h2>
+      <p>{l.fits64} {fits ? <a href={to('/dgx-spark-64gb/')}>{t.fitsLink}</a> : <>{t.notFits}<a href={to('/dgx-spark-64gb/')}>{t.notFitsLink}</a>.</>}</p>
+
+      {l.local ? (
+        <>
+          <h2>{t.useLocal}</h2>
+          <p>{t.localBefore(l.local.view)}<code>127.0.0.1:{l.local.port}</code>{t.localAfter}</p>
+        </>
+      ) : (
+        <>
+          <h2>{t.useTools}</h2>
+          <p>
+            {t.toolsBefore}<a href={to('/guides/claude-code-local-model-dgx-spark/')}>{t.toolsClaude}</a>{t.toolsAnd}<a href={to('/guides/opencode-local-model-dgx-spark/')}>{t.toolsOpencode}</a>.
+          </p>
+        </>
+      )}
+
+      <h2>{t.install}</h2>
+      <p>{t.installText}</p>
+    </div>
+    <Command lang={lang} />
+    <section class="section" style="padding-top:72px" aria-labelledby="faq-h">
+      <div class="section-head"><h2 id="faq-h">{t.faqTitle(l.name)}</h2></div>
+      <Faq items={faq} />
+    </section>
+    <section style="padding-bottom:96px">
+      <h2 style="font-size:clamp(1.4rem,2.4vw,1.8rem);margin-bottom:16px">{t.others}</h2>
+      <ul class="machines">
+        {others.map((o) => (
+          <li><a href={to(`/models/${o.slug}/`)}><span class="m-maker">{o.maker}</span><span class="m-name">{o.name}</span><span class="muted" style="font-size:14px">{o.value}{sp}{o.unit}, {o.what}</span></a></li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Base>

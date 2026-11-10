@@ -1,0 +1,9 @@
+---
+import ModelPage from '../../../components/views/ModelPage.astro';
+import { lanes } from '../../../data/lanes';
+
+export function getStaticPaths() {
+  return lanes.map((l) => ({ params: { slug: l.slug } }));
+}
+---
+<ModelPage slug={Astro.params.slug} lang="fr" />
