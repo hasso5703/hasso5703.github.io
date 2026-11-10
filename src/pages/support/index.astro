@@ -1,0 +1,96 @@
+---
+import Base from '../../layouts/Base.astro';
+import Faq from '../../components/Faq.astro';
+import { SITE } from '../../data/site';
+
+const path = '/support/';
+const title = 'Support Alzeo: what helps an open-source project grow';
+const description =
+  'Alzeo is free and open source. A star, what your box measured, a report of what breaks and a word to another ' +
+  'owner help it grow. Organizations can fund it.';
+const published = '2026-11-10';
+const mail = 'contact@alzeo.ai';
+
+const faq = [
+  {
+    q: 'Is Alzeo free?',
+    a: 'Yes. Alzeo is open source under the MIT license, for a person and for a company alike. What is paid is optional work around it for organizations: installation, a day on site, and support.',
+  },
+  {
+    q: 'Is there a paid version of Alzeo?',
+    a: 'No. There is one version, the one in the repository, with every lane and the cockpit.',
+  },
+  {
+    q: 'How can I help without writing code?',
+    a: 'Star the repository, post what your box measured, report what breaks with the command and what it printed, and tell another owner.',
+  },
+  {
+    q: 'Can I donate to Alzeo?',
+    a: 'Not today: there is no donation link. When one opens it is listed on this page.',
+  },
+];
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: 'Support the project', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/">{SITE.name}</a> / Support the project</p>
+      <h1>How to support Alzeo</h1>
+      <p class="lead">Alzeo is free. It is found by what its users say of it.</p>
+    </header>
+
+    <div class="prose">
+      <p class="answer">
+        {SITE.name} is open source under the MIT license and asks for nothing: no account, no paid version, and nothing
+        that counts its users. <strong>What helps most costs no money</strong>: a star, what your box measured, a report
+        of what breaks, a word to another owner.
+      </p>
+
+      <h2>What helps, a minute each</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">What</th><th scope="col">Why it counts</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><a href={SITE.repo}>Star the repository</a></th><td>A star helps other owners find the project.</td></tr>
+            <tr><th scope="row">Post what your box measured</th><td>Your machine, your model and your numbers, in <a href={SITE.forum}>the NVIDIA forum thread</a> or in <a href={SITE.discussions}>Discussions</a>. A second machine's numbers say what ours cannot.</td></tr>
+            <tr><th scope="row"><a href={SITE.repo + '/issues'}>Report what breaks</a></th><td>An issue with the command you ran and what it printed. That is the shortest way to a fix.</td></tr>
+            <tr><th scope="row">Tell another owner</th><td>A link to <a href="/">{SITE.url.replace('https://', '')}</a> where DGX Spark owners talk: a forum, a chat, a team channel.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>For an organization</h2>
+      <p>
+        If your organization relies on {SITE.name}, or wants to, the way to fund the work is to buy some of it: a remote
+        pilot, a day on site, or support by the month. The offers are on <a href="/enterprise/">the page for
+        organizations</a>, and the address is <a href={'mailto:' + mail}>{mail}</a>.
+      </p>
+
+      <h2>Donations</h2>
+      <p>
+        There is no donation link today. When one opens it is listed on this page.
+      </p>
+    </div>
+
+    <section class="section" aria-labelledby="faq-h" style="padding-top:72px">
+      <div class="section-head"><h2 id="faq-h">Questions about supporting the project</h2></div>
+      <Faq items={faq} />
+      <p class="updated" style="margin-top:28px">Published {published}. Last checked {SITE.updated} against {SITE.name} {SITE.version}.</p>
+    </section>
+  </div>
+</Base>

@@ -48,6 +48,7 @@ const en = {
     machines: 'Machines',
     gb64: '64 GB',
     enterprise: 'For organizations',
+    support: 'Support the project',
     note: (box: string, updated: string) =>
       `Open source under the MIT license. The project's own numbers are point-in-time measurements on ${box}, with ` +
       "their method in the repo. Numbers from owners' reports are attributed and linked. DGX Spark, DGX OS and GB10 are " +
@@ -231,6 +232,7 @@ const fr: UI = {
     machines: 'Machines',
     gb64: '64 Go',
     enterprise: 'Pour les organisations',
+    support: 'Soutenir le projet',
     note: (box: string, updated: string) =>
       `Open source sous licence MIT. Les chiffres propres au projet sont des mesures ponctuelles sur ${box}, avec leur ` +
       'méthode dans le dépôt. Les chiffres tirés des retours de possesseurs sont attribués et accompagnés de leur lien. ' +

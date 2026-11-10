@@ -1,0 +1,101 @@
+---
+// The support page in French: the same sections as src/pages/support/index.astro, in the same order. In the text
+// below, a French space before : ; ! ? and inside a number or before its unit is &nbsp; (U+00A0).
+import Base from '../../../layouts/Base.astro';
+import Faq from '../../../components/Faq.astro';
+import { SITE } from '../../../data/site';
+
+const lang = 'fr';
+const path = '/fr/support/';
+const title = "Soutenir Alzeo : ce qui aide un projet open source à grandir";
+const description =
+  "Alzeo est gratuit et open source. Une étoile, vos mesures, une panne signalée, un mot à un autre possesseur " +
+  "l'aident. Les organisations peuvent le financer.";
+const published = '2026-11-10';
+const mail = 'contact@alzeo.ai';
+
+const faq = [
+  {
+    q: 'Alzeo est-il gratuit ?',
+    a: "Oui. Alzeo est open source, sous licence MIT, pour un particulier comme pour une entreprise. Ce qui est payant, " +
+      "c'est un travail facultatif autour, pour les organisations : l'installation, une journée sur site, et le support.",
+  },
+  {
+    q: "Existe-t-il une version payante d'Alzeo ?",
+    a: "Non. Il y a une seule version, celle du dépôt, avec toutes les lanes et le cockpit.",
+  },
+  {
+    q: 'Comment aider sans écrire de code ?',
+    a: "Mettez une étoile au dépôt, publiez ce que votre machine a mesuré, signalez ce qui casse avec la commande et ce " +
+      "qu'elle a affiché, et parlez-en à un autre possesseur.",
+  },
+  {
+    q: 'Peut-on faire un don à Alzeo ?',
+    a: "Pas aujourd'hui : il n'y a pas de lien de don. Quand il y en aura un, il sera indiqué sur cette page.",
+  },
+];
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/fr/' },
+      { '@type': 'ListItem', position: 2, name: 'Soutenir le projet', item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={title} description={description} path={path} jsonld={jsonld} type="article" lang={lang}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href="/fr/">{SITE.name}</a> / Soutenir le projet</p>
+      <h1>Comment soutenir Alzeo</h1>
+      <p class="lead">Alzeo est gratuit. Il se fait connaître par ce que ses utilisateurs en disent.</p>
+    </header>
+
+    <div class="prose">
+      <p class="answer">
+        {SITE.name} est open source, sous licence MIT, et ne demande rien&nbsp;: ni compte, ni version payante, ni rien
+        qui compte ses utilisateurs. <strong>Ce qui aide le plus ne coûte pas d'argent</strong>&nbsp;: une étoile, les
+        mesures de votre machine, le signalement d'une panne, un mot à un autre possesseur.
+      </p>
+
+      <h2>Ce qui aide, une minute chacun</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">Quoi</th><th scope="col">Pourquoi cela compte</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><a href={SITE.repo}>Mettre une étoile au dépôt</a></th><td>Une étoile aide les autres possesseurs à trouver le projet.</td></tr>
+            <tr><th scope="row">Publier ce que votre machine a mesuré</th><td>Votre machine, votre modèle et vos chiffres, dans <a href={SITE.forum}>le fil du forum NVIDIA</a> ou dans les <a href={SITE.discussions}>Discussions</a>. Les chiffres d'une seconde machine disent ce que les nôtres ne peuvent pas dire.</td></tr>
+            <tr><th scope="row"><a href={SITE.repo + '/issues'}>Signaler ce qui casse</a></th><td>Une issue avec la commande lancée et ce qu'elle a affiché. C'est le plus court chemin vers un correctif.</td></tr>
+            <tr><th scope="row">En parler à un autre possesseur</th><td>Un lien vers <a href="/fr/">{SITE.url.replace('https://', '')}</a> là où les possesseurs de DGX Spark se parlent&nbsp;: un forum, une messagerie, un canal d'équipe.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Pour une organisation</h2>
+      <p>
+        Si votre organisation s'appuie sur {SITE.name}, ou veut le faire, la façon de financer le travail est d'en acheter
+        une part&nbsp;: un pilote à distance, une journée sur site, ou du support au mois. Les offres sont sur <a
+        href="/fr/enterprise/">la page pour les organisations</a>, et l'adresse est <a href={'mailto:' + mail}>{mail}</a>.
+      </p>
+
+      <h2>Dons</h2>
+      <p>
+        Il n'y a pas de lien de don aujourd'hui. Quand il y en aura un, il sera indiqué sur cette page.
+      </p>
+    </div>
+
+    <section class="section" aria-labelledby="faq-h" style="padding-top:72px">
+      <div class="section-head"><h2 id="faq-h">Questions sur le soutien au projet</h2></div>
+      <Faq items={faq} />
+      <p class="updated" style="margin-top:28px">Publié le {published}. Dernière vérification le {SITE.updated}, sur {SITE.name} {SITE.version}.</p>
+    </section>
+  </div>
+</Base>
