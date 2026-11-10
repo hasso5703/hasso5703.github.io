@@ -34,8 +34,8 @@ const hrefs = { en: new URL(localePath(path, 'en'), SITE.url).href, fr: new URL(
 // any choice, whose browser asks for French first. It is the site's only redirect, and crawlers read both versions.
 const toFrench = `
       try {
-        var chosen = localStorage.getItem('lang');
-        var first = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+        const chosen = localStorage.getItem('lang');
+        const first = (navigator.languages && navigator.languages[0]) || navigator.language || '';
         if (chosen === 'fr' || (chosen === null && /^fr(-|$)/i.test(first))) {
           location.replace(${JSON.stringify(localePath(path, 'fr'))} + location.search + location.hash);
         }
