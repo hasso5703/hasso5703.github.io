@@ -1,25 +1,28 @@
 ---
 import { SITE } from '../data/site';
+import { siteText } from '../data/site.fr';
+import { ui, localePath, type Lang } from '../i18n/ui';
+interface Props { lang?: Lang }
+const { lang = 'en' } = Astro.props;
+const t = ui[lang].footer;
+const text = siteText(lang);
+const to = (p: string) => localePath(p, lang);
 ---
 <footer class="site-foot">
   <div class="wrap">
-    <nav aria-label="Project">
-      <a href={SITE.repo}>Source on GitHub</a>
-      <a href={SITE.releases}>Releases</a>
-      <a href={SITE.discussions}>Discussions</a>
-      <a href={SITE.forum}>The NVIDIA forum thread</a>
-      <a href="/models/">Models</a>
-      <a href="/guides/">Guides</a>
-      <a href="/machines/">Machines</a>
-      <a href="/dgx-spark-64gb/">64 GB</a>
-      <a href="/enterprise/">For organizations</a>
+    <nav aria-label={t.nav}>
+      <a href={SITE.repo}>{t.source}</a>
+      <a href={SITE.releases}>{t.releases}</a>
+      <a href={SITE.discussions}>{t.discussions}</a>
+      <a href={SITE.forum}>{t.forum}</a>
+      <a href={to('/models/')}>{t.models}</a>
+      <a href={to('/guides/')}>{t.guides}</a>
+      <a href={to('/machines/')}>{t.machines}</a>
+      <a href={to('/dgx-spark-64gb/')}>{t.gb64}</a>
+      <a href={to('/enterprise/')}>{t.enterprise}</a>
       <a href="/llms.txt">llms.txt</a>
     </nav>
-    <p>{SITE.sentence}</p>
-    <p>
-      Open source under the MIT license. The project's own numbers are point-in-time measurements on {SITE.referenceBox}, with
-      their method in the repo. Numbers from owners' reports are attributed and linked. DGX Spark, DGX OS and GB10 are trademarks of NVIDIA. This project is not
-      affiliated with NVIDIA or with any maker named here. Last updated {SITE.updated}.
-    </p>
+    <p>{text.sentence}</p>
+    <p>{t.note(text.referenceBox, SITE.updated)}</p>
   </div>
 </footer>

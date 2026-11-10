@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""After `astro build`: the full text of every page in Markdown (dist/llms-full.txt), the date each page last
-changed in the sitemap, and the pages that changed since the published site, for IndexNow (postbuild-out/).
+"""After `astro build`: the full text of every page in Markdown, one file per language (dist/llms-full.txt for the
+English pages, dist/fr/llms-full.txt for the French pages under /fr/), the date each page last changed in the
+sitemap, and the pages that changed since the published site, for IndexNow (postbuild-out/).
 
-A page changed when its Markdown differs from the one the published llms-full.txt carries. The published file is
-the record of what each page said and since when, so nothing else has to be kept from one build to the next. If it
-cannot be read (the first build, or no network), every page counts as changed today.
+A page changed when its Markdown differs from the one the published llms-full.txt of its language carries. The
+published file is the record of what each page said and since when, so nothing else has to be kept from one build
+to the next. If it cannot be read (the first build, or no network), every page of that language counts as changed
+today.
 
 Usage: python3 scripts/postbuild.py [dist]. LIVE_BASE overrides the published site it compares with.
 """
@@ -27,6 +29,8 @@ HOST = 'alzeo.ai'
 LIVE = os.environ.get('LIVE_BASE', SITE).rstrip('/')
 TODAY = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
 NS = '{http://www.sitemaps.org/schemas/sitemap/0.9}'
+XHTML = 'http://www.w3.org/1999/xhtml'   # the sitemap's links from each page to its other language
+FR = '/fr'   # the French pages live under this prefix, with the English slugs
 
 # What a reader of the text does not need: scripts, icons, buttons, the video, the breadcrumb, the interactive lane
 # pool (the lanes table below it says the same) and anything hidden from assistive technology.
@@ -301,18 +305,23 @@ def digest(text):
     return hashlib.sha256(text.strip().encode('utf-8')).hexdigest()
 
 
-def main():
-    found = {}
-    for f in sorted(DIST.rglob('index.html')):
-        if 'og' in f.relative_to(DIST).parts:
-            continue
-        url, title, body, links = page(f)
-        found[url] = (title, body, links)
+def french_sentence():
+    """The project's sentence in French: the description of the French home page's WebSite data."""
+    source = (DIST / FR.strip('/') / 'index.html').read_text(encoding='utf-8')
+    for m in re.finditer(r'<script type="application/ld\+json">(.*?)</script>', source, re.S):
+        data = json.loads(m.group(1))
+        if data.get('@type') == 'WebSite' and data.get('description'):
+            return data['description']
+    sys.exit(f'postbuild: {DIST}/fr/index.html has no WebSite data with a description')
 
+
+def full_text(found, prefix, head):
+    """<prefix>/llms-full.txt for the pages of one language. Returns each page's date, the pages that changed since
+    the published file of that language, and the file written."""
     # Order: home, then each section page followed by its pages in the order the section lists them.
-    order = [SITE + '/']
+    order = [SITE + prefix + '/']
     for section in ('/models/', '/dgx-spark-64gb/', '/machines/', '/guides/'):
-        top = SITE + section
+        top = SITE + prefix + section
         if top in found and top not in order:
             order.append(top)
             for link in found[top][2]:
@@ -321,7 +330,7 @@ def main():
     order += sorted(u for u in found if u not in order)
 
     previous = {}
-    published = fetch(LIVE + '/llms-full.txt')
+    published = fetch(f'{LIVE}{prefix}/llms-full.txt')
     if published:
         pattern = r'^URL: (\S+)\nUpdated: (\d{4}-\d{2}-\d{2})\n\n(.*?)(?=\n\n---\n\nURL: |\Z)'
         for m in re.finditer(pattern, published, re.S | re.M):
@@ -336,34 +345,72 @@ def main():
             updated[url] = TODAY
             changed.append(url)
 
-    sentence = next((l[2:] for l in (DIST / 'llms.txt').read_text(encoding='utf-8').splitlines() if l.startswith('> ')), '')
-    head = [
-        '# Alzeo: every page in full',
-        '',
-        f'> {sentence}',
-        '',
-        f'The text of every page of {SITE}/ in Markdown, in one file for AI agents and answer engines, with the date '
-        f'each page last changed. One line per page: {SITE}/llms.txt. The source of every number about the project: '
-        'https://github.com/hasso5703/alzeo.',
-    ]
     sections = [f'URL: {u}\nUpdated: {updated[u]}\n\n{found[u][1]}' for u in order]
-    (DIST / 'llms-full.txt').write_text('\n'.join(head) + '\n\n---\n\n' + '\n\n---\n\n'.join(sections) + '\n', encoding='utf-8')
+    out = DIST / prefix.strip('/') / 'llms-full.txt'
+    out.write_text('\n'.join(head) + '\n\n---\n\n' + '\n\n---\n\n'.join(sections) + '\n', encoding='utf-8')
+    return updated, changed, out
 
-    # The sitemap: each page's date, and the index dated by its newest page. Its URLs and the pages must be the same set.
+
+def main():
+    # The pages of each language: French under /fr/, English everywhere else.
+    found = {'en': {}, 'fr': {}}
+    for f in sorted(DIST.rglob('index.html')):
+        if 'og' in f.relative_to(DIST).parts:
+            continue
+        url, title, body, links = page(f)
+        found['fr' if url.startswith(SITE + FR + '/') else 'en'][url] = (title, body, links)
+
+    sentence = next((l[2:] for l in (DIST / 'llms.txt').read_text(encoding='utf-8').splitlines() if l.startswith('> ')), '')
+    heads = {
+        'en': lambda: [
+            '# Alzeo: every page in full',
+            '',
+            f'> {sentence}',
+            '',
+            f'The text of every page of {SITE}/ in Markdown, in one file for AI agents and answer engines, with the date '
+            f'each page last changed. One line per page: {SITE}/llms.txt. The source of every number about the project: '
+            'https://github.com/hasso5703/alzeo.',
+        ],
+        'fr': lambda: [
+            '# Alzeo\u00a0: toutes les pages en entier',
+            '',
+            f'> {french_sentence()}',
+            '',
+            f'Le texte de chaque page de {SITE}{FR}/ en Markdown, dans un seul fichier pour les agents d\'IA et les moteurs '
+            'de réponse, avec la date de la dernière modification de chaque page. Les mêmes pages en anglais\u00a0: '
+            f'{SITE}/llms-full.txt. Une ligne par page, en anglais\u00a0: {SITE}/llms.txt. La source de chaque chiffre du '
+            'projet\u00a0: https://github.com/hasso5703/alzeo.',
+        ],
+    }
+    updated, changed, report = {}, [], []
+    for lang, prefix in (('en', ''), ('fr', FR)):
+        if not found[lang]:
+            continue
+        dates, news, out = full_text(found[lang], prefix, heads[lang]())
+        updated.update(dates)
+        changed += news
+        report.append(f'{len(dates)} {lang} pages ({len(news)} changed), {out.relative_to(DIST)} {out.stat().st_size} bytes')
+
+    # The sitemap: each page's date, and the index dated by its newest page. Its URLs and the pages of both languages
+    # must be the same set. Each URL's links to its other language (xhtml:link) keep their usual prefix.
     ET.register_namespace('', NS[1:-1])
+    ET.register_namespace('xhtml', XHTML)
     in_sitemap = set()
     for f in sorted(DIST.glob('sitemap-*.xml')):
         tree = ET.parse(f)
         root = tree.getroot()
         if root.tag == NS + 'urlset':
             for u in root.findall(NS + 'url'):
-                loc = u.find(NS + 'loc').text.strip()
+                loc_el = u.find(NS + 'loc')
+                loc = loc_el.text.strip()
                 in_sitemap.add(loc)
                 if loc not in updated:
                     sys.exit(f'postbuild: {loc} is in {f.name} but no page has that canonical URL')
                 lastmod = u.find(NS + 'lastmod')
                 if lastmod is None:
-                    lastmod = ET.SubElement(u, NS + 'lastmod')
+                    # Right after <loc>: the sitemap schema puts lastmod before the links to the other language.
+                    lastmod = ET.Element(NS + 'lastmod')
+                    u.insert(list(u).index(loc_el) + 1, lastmod)
                 lastmod.text = updated[loc]
         elif root.tag == NS + 'sitemapindex':
             for s in root.findall(NS + 'sitemap'):
@@ -383,8 +430,7 @@ def main():
     key = keys[0].stem
     OUT.mkdir(exist_ok=True)
     (OUT / 'indexnow.json').write_text(json.dumps({'host': HOST, 'key': key, 'keyLocation': f'{SITE}/{key}.txt', 'urlList': changed}, indent=1), encoding='utf-8')
-    print(f'postbuild: {len(order)} pages, {len(changed)} changed since {LIVE}, '
-          f'llms-full.txt {(DIST / "llms-full.txt").stat().st_size} bytes, sitemap dated')
+    print(f'postbuild: since {LIVE}: {"; ".join(report)}; sitemap dated')
 
 
 if __name__ == '__main__':

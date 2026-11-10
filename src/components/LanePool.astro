@@ -1,10 +1,16 @@
 ---
-import { lanes } from '../data/lanes';
-import { SITE } from '../data/site';
+import { getLanes } from '../data/lanes.fr';
+import { siteText } from '../data/site.fr';
+import { ui, type Lang } from '../i18n/ui';
+interface Props { lang?: Lang }
+const { lang = 'en' } = Astro.props;
+const lanes = getLanes(lang);
+const t = ui[lang];
+const box = siteText(lang).referenceBox;
 const first = lanes[0];
 ---
 <div class="pool-ui" data-pool>
-  <div class="rack" role="tablist" aria-label="Lanes" aria-orientation="vertical">
+  <div class="rack" role="tablist" aria-label={t.pool.label} aria-orientation="vertical">
     {lanes.map((l, i) => (
         <button
           type="button"
@@ -26,19 +32,16 @@ const first = lanes[0];
   <div class="lane-view" id="lane-panel" role="tabpanel" aria-labelledby={`tab-${first.id}`} style={`--hue:${first.hue}`} aria-live="polite">
     <div class="pool">
       <div class="poolbar" aria-hidden="true"><span class="fill filling"></span><span class="label" data-f="barname">{first.name}</span></div>
-      <p class="pool-caption">
-        The 128 GB of unified memory, shared by the CPU and the GPU, held by <b data-f="name">{first.name}</b> while it
-        serves. The other lanes wait on disk until you load one.
-      </p>
+      <p class="pool-caption">{t.pool.before}<b data-f="name">{first.name}</b>{t.pool.after}</p>
     </div>
     <p class="metric"><span class:list={['v', first.value.length > 7 && 'long']} data-f="value">{first.value}</span><span class="u" data-f="unit">{first.unit}</span></p>
     <p class="metric-what" data-f="what">{first.what}</p>
     <ul class="lane-facts" data-f="facts">{first.facts.map((f) => <li>{f}</li>)}</ul>
     <p class="lane-build" data-f="build">{first.build[0].toUpperCase() + first.build.slice(1)}.</p>
     <dl class="receipt">
-      <dt>Measured on</dt><dd>{SITE.referenceBox}, the project's reference box</dd>
-      <dt>How</dt><dd data-f="method">{first.receipt.method}</dd>
-      <dt>Source</dt><dd><a data-f="source" href={first.receipt.href}>{first.receipt.source}</a></dd>
+      <dt>{t.receipt.measuredOn}</dt><dd>{t.receipt.reference(box)}</dd>
+      <dt>{t.receipt.how}</dt><dd data-f="method">{first.receipt.method}</dd>
+      <dt>{t.receipt.source}</dt><dd><a data-f="source" href={first.receipt.href}>{first.receipt.source}</a></dd>
     </dl>
   </div>
 </div>

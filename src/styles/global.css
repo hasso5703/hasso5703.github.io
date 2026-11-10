@@ -135,6 +135,22 @@ p { margin: 0; max-width: var(--measure); }
 }
 .gh-link { display: inline-flex; align-items: center; gap: 8px; }
 .gh-link svg { width: 18px; height: 18px; }
+/* the language switcher: two quiet links beside GitHub, the page's own language on a soft ground */
+.lang-switch { display: inline-flex; align-items: center; gap: 2px; }
+.head-tools .lang-switch a {
+  padding: 7px 6px; border-radius: var(--r-1); color: var(--ink-3);
+  font-size: 13px; font-weight: 620; letter-spacing: 0.04em; line-height: 1;
+}
+.head-tools .lang-switch a:hover { color: var(--ink); }
+.head-tools .lang-switch a[aria-current='true'] { color: var(--ink); background: var(--paper-2); }
+/* Between the phone and the desk, the GitHub link keeps its mark and drops its word, and the gaps tighten, so the five
+   links and the switcher share one row. */
+@media (max-width: 960px) {
+  .site-head .wrap { gap: 22px; }
+  .nav { gap: 18px; }
+  .head-tools { gap: 16px; }
+  .gh-link span { display: none; }
+}
 @media (max-width: 760px) {
   .nav .hide-s { display: none; }
   .nav, .head-tools { gap: 14px; }

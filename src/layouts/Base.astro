@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE } from '../data/site';
 import { ogKey } from '../data/cards';
+import { ui, localePath, otherLang, type Lang } from '../i18n/ui';
 import { existsSync } from 'node:fs';
 
 interface Props {
@@ -13,24 +14,57 @@ interface Props {
   jsonld?: object[];
   ogImage?: string;
   type?: 'website' | 'article';
+  lang?: Lang;
+  // The page exists in both languages: every page but the 404.
+  alternate?: boolean;
 }
-// A page's own share card when its capture exists (public/og/<key>.png), the site's card otherwise.
-const ownCard = `/og/${ogKey(Astro.props.path)}.png`;
-const { title, description, path, jsonld = [], ogImage = existsSync(`public${ownCard}`) ? ownCard : '/og/default.png', type = 'website' } = Astro.props;
+// A page's own share card when its capture exists (public/og/<key>.png), the site's card otherwise. A French page
+// shows its English page's card.
+const ownCard = `/og/${ogKey(localePath(Astro.props.path, 'en'))}.png`;
+const {
+  title, description, path, jsonld = [], ogImage = existsSync(`public${ownCard}`) ? ownCard : '/og/default.png',
+  type = 'website', lang = 'en', alternate = path !== '/404/',
+} = Astro.props;
 const canonical = new URL(path, SITE.url).href;
 const og = new URL(ogImage, SITE.url).href;
+const t = ui[lang];
+// Both versions of a page name each other, and the English one is the default for any other language.
+const hrefs = { en: new URL(localePath(path, 'en'), SITE.url).href, fr: new URL(localePath(path, 'fr'), SITE.url).href };
+// An English page opens in French for a reader who chose French (the language switcher stores the choice) or, before
+// any choice, whose browser asks for French first. It is the site's only redirect, and crawlers read both versions.
+const toFrench = `
+      try {
+        var chosen = localStorage.getItem('lang');
+        var first = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+        if (chosen === 'fr' || (chosen === null && /^fr(-|$)/i.test(first))) {
+          location.replace(${JSON.stringify(localePath(path, 'fr'))} + location.search + location.hash);
+        }
+      } catch (e) {}
+    `;
+// Every block of structured data says its language.
+const ld = jsonld.map((j) => ('inLanguage' in j ? j : { ...j, inLanguage: lang }));
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternate && (
+      <>
+        <link rel="alternate" hreflang="en" href={hrefs.en} />
+        <link rel="alternate" hreflang="fr" href={hrefs.fr} />
+        <link rel="alternate" hreflang="x-default" href={hrefs.en} />
+      </>
+    )}
+    {alternate && lang === 'en' && <script is:inline set:html={toFrench} />}
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content={t.ogLocale} />
+    {alternate && <meta property="og:locale:alternate" content={ui[otherLang(lang)].ogLocale} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -52,12 +86,12 @@ const og = new URL(ogImage, SITE.url).href;
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
       } catch (e) {}
     </script>
-    {jsonld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+    {ld.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <Header path={path} />
+    <a class="skip" href="#main">{t.skip}</a>
+    <Header path={path} lang={lang} alternate={alternate} />
     <main id="main"><slot /></main>
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>

@@ -1,24 +1,29 @@
 ---
 import { SITE } from '../data/site';
-interface Props { label?: string }
-const { label = 'The one command' } = Astro.props;
+import { ui, type Lang } from '../i18n/ui';
+interface Props { label?: string; lang?: Lang }
+const { lang = 'en' } = Astro.props;
+const t = ui[lang].command;
+const { label = t.label } = Astro.props;
 ---
 <div class="cmd" data-cmd>
   <pre aria-label={label}><code>{SITE.install}</code></pre>
-  <button type="button" data-copy>Copy</button>
+  <button type="button" data-copy data-copied={t.copied} data-fail={t.fail}>{t.copy}</button>
 </div>
 <script>
+  // The button's words come from the page (data-copied, data-fail), in the page's language.
   for (const box of document.querySelectorAll<HTMLElement>('[data-cmd]')) {
     const btn = box.querySelector<HTMLButtonElement>('[data-copy]');
     const code = box.querySelector('code')?.textContent ?? '';
+    const idle = btn?.textContent ?? '';
     btn?.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(code);
-        btn.textContent = 'Copied';
+        btn.textContent = btn.dataset.copied ?? '';
       } catch (e) {
-        btn.textContent = 'Select and copy';
+        btn.textContent = btn.dataset.fail ?? '';
       }
-      setTimeout(() => (btn.textContent = 'Copy'), 2200);
+      setTimeout(() => (btn.textContent = idle), 2200);
     });
   }
 </script>
