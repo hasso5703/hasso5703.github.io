@@ -1,0 +1,55 @@
+---
+// The machines page, in English (/machines/) or in French (/fr/machines/): one template over the machines.
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../data/site';
+import { getMachines } from '../../data/machines.fr';
+import { ui, localePath, type Lang } from '../../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang].machines;
+const machines = getMachines(lang);
+const to = (p: string) => localePath(p, lang);
+const path = to('/machines/');
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: t.listName,
+    itemListElement: machines.map((m, i) => ({ '@type': 'ListItem', position: i + 1, name: m.name, url: SITE.url + to(`/machines/${m.slug}/`) })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + to('/') },
+      { '@type': 'ListItem', position: 2, name: t.crumb, item: SITE.url + path },
+    ],
+  },
+];
+---
+<Base title={t.title} description={t.description} path={path} jsonld={jsonld} lang={lang}>
+  <div class="wrap">
+    <header class="page-head">
+      <p class="crumbs"><a href={to('/')}>{SITE.name}</a> / {t.crumb}</p>
+      <h1>{t.h1}</h1>
+      <p class="lead">{t.lead}</p>
+    </header>
+    <ul class="machines">
+      {machines.map((m) => (
+        <li>
+          <a href={to(`/machines/${m.slug}/`)}>
+            <span class="m-maker">{m.maker}</span>
+            <span class="m-name">{m.name}</span>
+            <span class="tags">{m.memory.map((g) => <span class:list={['tag', g === '64' && 't64']}>{t.tag(g)}</span>)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="callout">
+      <p><strong>{t.calloutLead}</strong>{t.callout}</p>
+      <a class="btn" href={to('/dgx-spark-64gb/')}>{t.calloutLink}</a>
+    </div>
+    <div style="height:96px"></div>
+  </div>
+</Base>
