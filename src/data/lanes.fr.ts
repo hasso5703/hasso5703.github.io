@@ -52,9 +52,9 @@ const fr: Record<string, Text> = {
     about:
       'La version FP4 du Flash-Next par NVIDIA, sur vLLM : la qualité de la lane flash pour environ la moitié de son ' +
       "disque, avec deux fois son cache KV, et une fenêtre d'un million de jetons en option.",
-    what: 'médiane gloutonne, à son effort par défaut',
+    what: "médiane gloutonne, à l'effort xhigh",
     facts: [
-      "106,6 tok/s au total sur 8 flux, à l'effort lean",
+      'À lean, son effort par défaut depuis la v1.46.4 : 47,4 tok/s seul, 106,6 au total sur 8 flux',
       'GSM8K 97,64 % sur 1 314 problèmes',
       'Environ la moitié du disque de la lane flash',
     ],
