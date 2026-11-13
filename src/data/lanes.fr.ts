@@ -61,6 +61,8 @@ const fr: Record<string, Text> = {
     build: 'FP4-Local (NVIDIA), sur vLLM b12x build 8244d1c',
     fits64: NO_64,
     cockpit: '17 à 19 minutes avant de répondre la première fois, environ 5 minutes et demie ensuite',
+    // le titre sous 77 caractères (65 plus « | Alzeo ») : sans « , mesuré », que la page dit déjà
+    titleFact: '55,4 tok/s',
     method: "./bench.sh à l'effort xhigh",
   },
   'nemotron-3-5-bolt': {
@@ -101,6 +103,8 @@ const fr: Record<string, Text> = {
     build: "Le GGUF UD-Q4_K_XL d'Unsloth avec le brouillon DFlash2 de ggml-org, sur llama.cpp b12316",
     fits64: NO_64,
     cockpit: '4 à 5 minutes la première fois depuis un disque USB, moins d\'une minute ensuite',
+    // le titre sous 77 caractères (65 plus « | Alzeo ») : sans « , mesuré », que la page dit déjà
+    titleFact: '64,1 tok/s',
     method: './bench.sh',
   },
   'ornith-1-5-122b': {

@@ -56,6 +56,7 @@ export const lanes: Lane[] = [
     build: 'FP4-Local (NVIDIA), on vLLM b12x build 8244d1c',
     fits64: 'No: it needs a 128 GB DGX Spark.',
     load: { cockpit: '17 to 19 minutes to answer the first time, about 5 and a half after', prepare: 'flash-local', target: 'flash-local' },
+    titleFact: '55.4 tok/s',
     receipt: { method: './bench.sh at the xhigh effort', source: 'docs/flash-local-lane.md', href: gh('docs/flash-local-lane.md') },
   },
   {
@@ -67,6 +68,7 @@ export const lanes: Lane[] = [
     build: "Unsloth's UD-Q4_K_XL GGUF with ggml-org's DFlash2 draft, on llama.cpp b12316",
     fits64: 'No: it needs a 128 GB DGX Spark.',
     load: { cockpit: '4 to 5 minutes the first time from a USB disk, under a minute after', prepare: 'flash-unsloth', target: 'flash-unsloth' },
+    titleFact: '64.1 tok/s',
     receipt: { method: './bench.sh', source: 'docs/flash-unsloth-lane.md', href: gh('docs/flash-unsloth-lane.md') },
   },
   {
