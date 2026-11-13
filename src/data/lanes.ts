@@ -59,6 +59,17 @@ export const lanes: Lane[] = [
     receipt: { method: './bench.sh at the xhigh effort', source: 'docs/flash-local-lane.md', href: gh('docs/flash-local-lane.md') },
   },
   {
+    id: 'flash-unsloth', slug: 'flash-unsloth-gguf', name: 'Qwen3.8 Flash-Next Unsloth GGUF', maker: 'Unsloth', logo: '/img/logos/unsloth.svg', hue: '#c084fc',
+    kind: 'The GGUF build of the flash model, on llama.cpp',
+    about: "Unsloth's dynamic GGUF of the Flash-Next (UD-Q4_K_XL), served by llama.cpp with an n-gram lookup and a DFlash2 draft: two requests of 262,144 tokens at once, or one of a million.",
+    value: '64.1', unit: 'tok/s', what: 'greedy median, one request',
+    facts: ['GSM8K 98.8% on 250 problems, through the proxy', 'Two requests of 262,144 tokens at once, or one of 1,048,576', "An agent's next turn from its cache: 33 to 50 tokens computed again"],
+    build: "Unsloth's UD-Q4_K_XL GGUF with ggml-org's DFlash2 draft, on llama.cpp b12316",
+    fits64: 'No: it needs a 128 GB DGX Spark.',
+    load: { cockpit: '4 to 5 minutes the first time from a USB disk, under a minute after', prepare: 'flash-unsloth', target: 'flash-unsloth' },
+    receipt: { method: './bench.sh', source: 'docs/flash-unsloth-lane.md', href: gh('docs/flash-unsloth-lane.md') },
+  },
+  {
     id: 'bolt', slug: 'nemotron-3-5-bolt', name: 'Nemotron 3.5 Bolt', maker: 'NVIDIA', logo: '/img/logos/nvidia.svg', hue: '#84cc16',
     kind: 'A 74B that reads images and video',
     about: "NVIDIA's 74B that reads images and video, in a 24 GB checkpoint, on vLLM with its drafter.",

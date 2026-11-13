@@ -87,6 +87,22 @@ const fr: Record<string, Text> = {
     cockpit: 'environ 9 à 11 minutes avant de répondre',
     method: 'la campagne de la lane Super VL',
   },
+  'flash-unsloth-gguf': {
+    kind: 'La version GGUF du modèle flash, sur llama.cpp',
+    about:
+      "Le GGUF dynamique d'Unsloth du Flash-Next (UD-Q4_K_XL), servi par llama.cpp avec une recherche par n-grammes et " +
+      "un brouillon DFlash2 : deux requêtes de 262 144 jetons à la fois, ou une d'un million.",
+    what: 'médiane gloutonne, une requête',
+    facts: [
+      'GSM8K 98,8 % sur 250 problèmes, par le proxy',
+      'Deux requêtes de 262 144 jetons à la fois, ou une de 1 048 576',
+      "Le tour suivant d'un agent repris de son cache : 33 à 50 jetons recalculés",
+    ],
+    build: "Le GGUF UD-Q4_K_XL d'Unsloth avec le brouillon DFlash2 de ggml-org, sur llama.cpp b12316",
+    fits64: NO_64,
+    cockpit: '4 à 5 minutes la première fois depuis un disque USB, moins d\'une minute ensuite',
+    method: './bench.sh',
+  },
   'ornith-1-5-122b': {
     kind: "Un mélange d'experts de 122B avec la vision",
     about:

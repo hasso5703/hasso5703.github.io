@@ -18,3 +18,8 @@ model's repository (`assets/ornith_logo.png` of https://github.com/ornith-ai/Orn
 it sizes the others. Lobe Icons has no Ornith icon (1.97.0, its latest on 2026-10-22). The mark
 belongs to its owner, and the cockpit shows it only to say which model the Ornith 1.5 122B lane
 runs.
+
+`unsloth.svg` is the colour Unsloth icon of the same Lobe Icons set (`icons/unsloth-color.svg` of 1.102.0, sha256
+068c4d17e21e2008a8660637177c061f6dddf36c1bac590d46617f01e48b0ef3 as published), with the same three attributes removed,
+copied from the cockpit's (the repository's `dashboard/static/img/logos/`). The mark belongs to Unsloth AI; the site
+shows it only to say that the Qwen3.8 Flash-Next Unsloth GGUF lane serves Unsloth's GGUF quantization of Qwen's model.
